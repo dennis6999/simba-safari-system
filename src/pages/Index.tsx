@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { StatCard } from '@/components/dashboard/StatCard';
@@ -43,11 +42,11 @@ const Index = () => {
     { date: 'Apr 10', visitors: 642 },
   ];
 
-  // Mock alerts
+  // Mock alerts - Fix the type issue by using literal types
   const alerts = [
     {
       id: '1',
-      type: 'security',
+      type: 'security' as 'security',
       title: 'Perimeter Alert: Sector 4',
       description: 'Motion detected near south perimeter fence. Security team dispatched.',
       timestamp: '10 minutes ago',
@@ -55,7 +54,7 @@ const Index = () => {
     },
     {
       id: '2',
-      type: 'health',
+      type: 'health' as 'health',
       title: 'Health Alert: Zebra (ID: ZB-103)',
       description: 'Exhibiting signs of reduced appetite. Veterinary checkup scheduled.',
       timestamp: '35 minutes ago',
@@ -63,28 +62,28 @@ const Index = () => {
     },
     {
       id: '3',
-      type: 'maintenance',
+      type: 'maintenance' as 'maintenance',
       title: 'Low Supply: Rhino Feed',
       description: 'Inventory below 15%. Please reorder within 3 days.',
       timestamp: '2 hours ago',
     },
     {
       id: '4',
-      type: 'info',
+      type: 'info' as 'info',
       title: 'VIP Group Arriving',
       description: 'Ministry of Tourism delegation arriving at 2:00 PM today.',
       timestamp: '3 hours ago',
     },
   ];
 
-  // Mock animal locations
+  // Mock animal locations - Fix the type issue by using literal types
   const animalLocations = [
     {
       id: '1',
       name: 'Simba',
       species: 'Lion (Male)',
       location: 'Eastern Savanna, Section B',
-      status: 'normal',
+      status: 'normal' as 'normal',
       lastUpdate: '5 min ago',
       trackerBattery: 87,
     },
@@ -93,7 +92,7 @@ const Index = () => {
       name: 'Tembo',
       species: 'Elephant (Female)',
       location: 'Northern Watering Hole',
-      status: 'normal',
+      status: 'normal' as 'normal',
       lastUpdate: '12 min ago',
       trackerBattery: 92,
     },
@@ -102,7 +101,7 @@ const Index = () => {
       name: 'Kifaru',
       species: 'Rhino (Male)',
       location: 'Protected Reserve',
-      status: 'alert',
+      status: 'alert' as 'alert',
       lastUpdate: '3 min ago',
       trackerBattery: 63,
     },
@@ -111,7 +110,7 @@ const Index = () => {
       name: 'Twiga',
       species: 'Giraffe (Female)',
       location: 'Acacia Grove',
-      status: 'warning',
+      status: 'warning' as 'warning',
       lastUpdate: '25 min ago',
       trackerBattery: 24,
     },
@@ -120,7 +119,7 @@ const Index = () => {
       name: 'Chui',
       species: 'Leopard (Female)',
       location: 'Southern Ridge',
-      status: 'normal',
+      status: 'normal' as 'normal',
       lastUpdate: '18 min ago',
       trackerBattery: 78,
     },
@@ -176,14 +175,14 @@ const Index = () => {
     },
   ];
 
-  // Mock tasks
+  // Mock tasks - Fix the type issue by using literal types
   const tasks = [
     {
       id: '1',
       title: 'Veterinary checkup for Rhino (ID: RH-104)',
       description: 'Scheduled health assessment and sample collection',
       dueDate: 'Today at 10:30 AM',
-      priority: 'high',
+      priority: 'high' as 'high',
       completed: false,
       assignee: 'Dr. Wanjiku',
     },
@@ -192,7 +191,7 @@ const Index = () => {
       title: 'Restock medical supplies',
       description: 'Antibiotics, bandages and tranquilizers',
       dueDate: 'Today at 1:00 PM',
-      priority: 'medium',
+      priority: 'medium' as 'medium',
       completed: false,
       assignee: 'John Muthoni',
     },
@@ -201,7 +200,7 @@ const Index = () => {
       title: 'Check south perimeter fence',
       description: 'Inspect reported damage in Sector 3',
       dueDate: 'Today at 3:15 PM',
-      priority: 'high',
+      priority: 'high' as 'high',
       completed: false,
       assignee: 'Security Team A',
     },
@@ -209,7 +208,7 @@ const Index = () => {
       id: '4',
       title: 'Update visitor information boards',
       dueDate: 'Today at 9:00 AM',
-      priority: 'low',
+      priority: 'low' as 'low',
       completed: true,
       assignee: 'Visitor Services',
     },

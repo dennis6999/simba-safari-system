@@ -83,7 +83,11 @@ export const AnimalCountBySpecies = ({
             <Tooltip content={<CustomTooltip />} />
             <Bar 
               dataKey="count" 
-              fill={({ endangered }) => endangered ? 'hsl(var(--accent))' : 'hsl(var(--primary))'} 
+              fill="hsl(var(--primary))"
+              // Using a proper formatter function that returns a string value
+              fillOpacity={({ endangered }) => endangered ? 1 : 0.8}
+              stroke={({ endangered }) => endangered ? 'hsl(var(--accent))' : 'hsl(var(--primary))'}
+              strokeWidth={({ endangered }) => endangered ? 2 : 0}
               radius={[4, 4, 0, 0]} 
             />
           </BarChart>
