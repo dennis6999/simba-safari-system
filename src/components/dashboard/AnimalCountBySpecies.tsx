@@ -1,44 +1,34 @@
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
-import { BadgeCheck, PawPrint } from 'lucide-react';
-import { DashboardCard } from './DashboardCard';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import { AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface SpeciesCount {
+type Animal = {
   name: string;
   count: number;
   endangered: boolean;
-}
+};
 
 interface AnimalCountBySpeciesProps {
-  data: SpeciesCount[];
+  data: Animal[];
   className?: string;
 }
 
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: TooltipProps<number, string>) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
-    const data = payload[0].payload as SpeciesCount;
-    
+    const isEndangered = payload[0].payload.endangered;
     return (
-      <div className="rounded-lg border bg-background p-2 shadow-sm">
-        <div className="flex flex-col">
-          <div className="flex items-center">
-            <span className="text-sm font-bold">{data.name}</span>
-            {data.endangered && (
-              <BadgeCheck className="h-4 w-4 ml-1 text-amber-500" />
-            )}
-          </div>
-          <span className="text-xs text-muted-foreground">
-            {data.endangered ? "Endangered Species" : "Species"}
-          </span>
-        </div>
-        <div className="mt-1">
-          <span className="text-sm font-bold">{data.count} animals</span>
+      <div className="bg-card p-3 border rounded-md shadow-sm">
+        <p className="font-medium">{label}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-foreground">Count: {payload[0].value}</p>
+          {isEndangered && (
+            <p className="text-xs text-destructive flex items-center gap-1">
+              <AlertTriangle className="h-3 w-3" /> Endangered
+            </p>
+          )}
         </div>
       </div>
     );
@@ -47,77 +37,64 @@ const CustomTooltip = ({
   return null;
 };
 
-// Custom renderer for bar properties that ensures type safety
-const getBarFillOpacity = (data: { endangered: boolean }) => {
-  return data.endangered ? 1 : 0.8;
-};
+export function AnimalCountBySpecies({ data, className }: AnimalCountBySpeciesProps) {
+  // Sort the data by count in descending order
+  const sortedData = [...data].sort((a, b) => b.count - a.count);
 
-const getBarStroke = (data: { endangered: boolean }) => {
-  return data.endangered ? 'hsl(var(--accent))' : 'hsl(var(--primary))';
-};
-
-const getBarStrokeWidth = (data: { endangered: boolean }) => {
-  return data.endangered ? 2 : 0;
-};
-
-export const AnimalCountBySpecies = ({
-  data,
-  className,
-}: AnimalCountBySpeciesProps) => {
   return (
-    <DashboardCard
-      title="Species Distribution"
-      description="Animal count by species"
-      icon={<PawPrint />}
-      className={cn("col-span-2", className)}
-    >
-      <div className="h-[250px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={data}
-            margin={{
-              top: 5,
-              right: 5,
-              left: 5,
-              bottom: 5,
-            }}
-          >
-            <XAxis 
-              dataKey="name" 
-              tick={{ fontSize: 12 }} 
-              tickLine={{ stroke: '#8884' }}
-              axisLine={{ stroke: '#8884' }}
-            />
-            <YAxis 
-              tick={{ fontSize: 12 }} 
-              tickLine={{ stroke: '#8884' }}
-              axisLine={{ stroke: '#8884' }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar 
-              dataKey="count" 
-              fill="hsl(var(--primary))"
-              fillOpacity={getBarFillOpacity}
-              stroke={getBarStroke}
-              strokeWidth={getBarStrokeWidth}
-              radius={[4, 4, 0, 0]} 
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="mt-2 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <div className="h-3 w-3 rounded-full bg-primary"></div>
-          <span className="text-xs">Normal Species</span>
+    <Card className={cn("overflow-hidden", className)}>
+      <CardHeader className="pb-0">
+        <CardTitle className="text-base">Animal Population</CardTitle>
+        <CardDescription>
+          Distribution by species
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[220px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={sortedData}
+              margin={{
+                top: 20,
+                right: 15,
+                left: 0,
+                bottom: 5,
+              }}
+              layout="vertical"
+            >
+              <XAxis type="number" />
+              <YAxis 
+                dataKey="name" 
+                type="category" 
+                tick={{ fontSize: 12 }} 
+                width={80}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar 
+                dataKey="count" 
+                // Fix: Use a string value or a number, not a function for fill
+                fill="hsl(var(--primary))"
+                // Instead, use a function in the style prop to change opacity based on endangered status
+                style={({ endangered }) => ({
+                  opacity: endangered ? 1 : 0.8
+                })}
+                // Fix: Use a string value or a number, not a function for radius
+                radius={4}
+              />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="h-3 w-3 rounded-full bg-accent"></div>
-          <span className="text-xs">Endangered Species</span>
+        <div className="text-xs text-muted-foreground flex items-center justify-between mt-2">
+          <div className="flex items-center gap-1">
+            <span className="w-3 h-3 bg-primary rounded-sm opacity-100 inline-block"></span>
+            <span>Endangered</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="w-3 h-3 bg-primary rounded-sm opacity-80 inline-block"></span>
+            <span>Non-endangered</span>
+          </div>
         </div>
-        <div className="text-xs text-muted-foreground">
-          Total: {data.reduce((sum, item) => sum + item.count, 0)} animals
-        </div>
-      </div>
-    </DashboardCard>
+      </CardContent>
+    </Card>
   );
-};
+}
