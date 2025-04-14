@@ -47,6 +47,19 @@ const CustomTooltip = ({
   return null;
 };
 
+// Custom renderer for bar properties that ensures type safety
+const getBarFillOpacity = (data: { endangered: boolean }) => {
+  return data.endangered ? 1 : 0.8;
+};
+
+const getBarStroke = (data: { endangered: boolean }) => {
+  return data.endangered ? 'hsl(var(--accent))' : 'hsl(var(--primary))';
+};
+
+const getBarStrokeWidth = (data: { endangered: boolean }) => {
+  return data.endangered ? 2 : 0;
+};
+
 export const AnimalCountBySpecies = ({
   data,
   className,
@@ -84,10 +97,9 @@ export const AnimalCountBySpecies = ({
             <Bar 
               dataKey="count" 
               fill="hsl(var(--primary))"
-              // Using a proper formatter function that returns a string value
-              fillOpacity={({ endangered }) => endangered ? 1 : 0.8}
-              stroke={({ endangered }) => endangered ? 'hsl(var(--accent))' : 'hsl(var(--primary))'}
-              strokeWidth={({ endangered }) => endangered ? 2 : 0}
+              fillOpacity={getBarFillOpacity}
+              stroke={getBarStroke}
+              strokeWidth={getBarStrokeWidth}
               radius={[4, 4, 0, 0]} 
             />
           </BarChart>
