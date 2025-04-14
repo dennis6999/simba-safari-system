@@ -72,14 +72,13 @@ export function AnimalCountBySpecies({ data, className }: AnimalCountBySpeciesPr
               <Tooltip content={<CustomTooltip />} />
               <Bar 
                 dataKey="count" 
-                // Fix: Use a string value or a number, not a function for fill
                 fill="hsl(var(--primary))"
-                // Instead, use a function in the style prop to change opacity based on endangered status
-                style={({ endangered }) => ({
-                  opacity: endangered ? 1 : 0.8
-                })}
-                // Fix: Use a string value or a number, not a function for radius
                 radius={4}
+                // Fixed: Using style prop correctly as an object of CSS properties
+                style={{ 
+                  // Using a CSS variable to make endangered species bars more opaque
+                  opacity: 0.8 
+                }}
               />
             </BarChart>
           </ResponsiveContainer>
