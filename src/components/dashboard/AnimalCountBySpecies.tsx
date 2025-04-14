@@ -74,9 +74,7 @@ export function AnimalCountBySpecies({ data, className }: AnimalCountBySpeciesPr
                 dataKey="count" 
                 fill="hsl(var(--primary))"
                 radius={4}
-                // Fixed: Using style prop correctly as an object of CSS properties
                 style={{ 
-                  // Using a CSS variable to make endangered species bars more opaque
                   opacity: 0.8 
                 }}
               />
