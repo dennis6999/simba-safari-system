@@ -24,6 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useNavigate } from 'react-router-dom';
 
 interface TopBarProps {
   openMobileSidebar: () => void;
@@ -31,12 +32,24 @@ interface TopBarProps {
 
 export const TopBar = ({ openMobileSidebar }: TopBarProps) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [language, setLanguage] = useState<'English' | 'Swahili'>('English');
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
+  };
+
+  const changeLanguage = (lang: 'English' | 'Swahili') => {
+    setLanguage(lang);
+    // In a real app, you would implement language change logic here
+    // For now, we'll just update the state
+  };
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
   };
 
   return (
@@ -124,8 +137,18 @@ export const TopBar = ({ openMobileSidebar }: TopBarProps) => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Language</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">English</DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">Swahili</DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="cursor-pointer" 
+                  onClick={() => changeLanguage('English')}
+                >
+                  <span className={language === 'English' ? 'font-bold' : ''}>English</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="cursor-pointer" 
+                  onClick={() => changeLanguage('Swahili')}
+                >
+                  <span className={language === 'Swahili' ? 'font-bold' : ''}>Swahili</span>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             
@@ -161,8 +184,8 @@ export const TopBar = ({ openMobileSidebar }: TopBarProps) => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => handleNavigation('/profile')}>Profile</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => handleNavigation('/settings')}>Settings</DropdownMenuItem>
             {isMobile && (
               <>
                 <DropdownMenuSeparator />
@@ -175,7 +198,7 @@ export const TopBar = ({ openMobileSidebar }: TopBarProps) => {
               </>
             )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">Log out</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => handleNavigation('/login')}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
