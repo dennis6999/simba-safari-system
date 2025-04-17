@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/layout/PageTemplate';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,7 +24,8 @@ import {
   MapPin,
   Check,
   Moon,
-  Sun
+  Sun,
+  Settings2
 } from 'lucide-react';
 
 const SettingsPage = () => {
@@ -79,7 +79,11 @@ const SettingsPage = () => {
   };
 
   return (
-    <PageTemplate title="Settings" description="Manage your system preferences">
+    <PageTemplate 
+      title="Settings" 
+      description="Configure your application preferences"
+      icon={<Settings2 className="h-6 w-6" />}
+    >
       <Tabs defaultValue="general" className="w-full">
         <TabsList className="grid grid-cols-1 md:grid-cols-4 mb-6">
           <TabsTrigger value="general">

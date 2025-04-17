@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/layout/PageTemplate';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,7 +19,8 @@ import {
   LogOut,
   CreditCard,
   Download,
-  Camera
+  Camera,
+  UserCircle2
 } from 'lucide-react';
 
 const ProfilePage = () => {
@@ -61,7 +61,11 @@ const ProfilePage = () => {
   };
 
   return (
-    <PageTemplate title="My Profile" description="Manage your account information">
+    <PageTemplate 
+      title="My Profile" 
+      description="Manage your account information"
+      icon={<UserCircle2 className="h-6 w-6" />}
+    >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-1">
           <Card>
