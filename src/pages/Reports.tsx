@@ -285,20 +285,21 @@ const Reports = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Select 
-              value={dateRangeFilter} 
-              onValueChange={setDateRangeFilter}
-              className="w-full sm:w-auto"
-            >
-              <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Date Range" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Reports</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="quarterly">Quarterly</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="w-full sm:w-40">
+              <Select 
+                value={dateRangeFilter} 
+                onValueChange={setDateRangeFilter}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Date Range" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Reports</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="quarterly">Quarterly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <Button className="w-full sm:w-auto">
               <FilePlus className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Generate Report</span>

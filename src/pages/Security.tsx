@@ -5,7 +5,7 @@ import {
   Clock, User, ChevronDown, AlertCircle, CheckCircle2, 
   FileText, Calendar, ArrowUpDown, Info
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -364,23 +364,24 @@ const Security = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Select
-              value={locationFilter}
-              onValueChange={setLocationFilter}
-              className="w-full sm:w-auto"
-            >
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Location" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                {locations.map(location => (
-                  <SelectItem key={location} value={location}>
-                    {location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="w-full sm:w-48">
+              <Select
+                value={locationFilter}
+                onValueChange={setLocationFilter}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Location" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Locations</SelectItem>
+                  {locations.map(location => (
+                    <SelectItem key={location} value={location}>
+                      {location}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Button className="w-full sm:w-auto">
               <AlertTriangle className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">New Incident</span>
