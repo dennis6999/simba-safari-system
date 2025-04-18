@@ -23,7 +23,6 @@ const Reports = () => {
   const [dateRangeFilter, setDateRangeFilter] = useState('month');
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Sample report data
   const reports = [
     {
       id: 'RPT-2025-001',
@@ -126,7 +125,6 @@ const Reports = () => {
     }
   ];
 
-  // Button action handlers
   const handleFilterClick = () => {
     toast({
       title: "Advanced Filters",
@@ -197,17 +195,16 @@ const Reports = () => {
     });
   };
 
-  // Filter reports based on type, date range and search query
   const filteredReports = reports.filter(report => {
     const matchesType = reportTypeFilter === 'all' || report.type === reportTypeFilter;
-    const matchesDateRange = dateRangeFilter === 'all' || dateRangeFilter === 'monthly'; // Simplified date range filter
+    const matchesDateRange = dateRangeFilter === 'all' || dateRangeFilter === 'monthly';
     const matchesSearch = searchQuery === '' ||
       report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       report.description.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchesType && matchesDateRange && matchesSearch;
   });
-  
+
   const getReportTypeBadge = (type: string) => {
     const typeMap: {[key: string]: {label: string, color: string}} = {
       'health': { label: 'Health', color: 'bg-red-100 text-red-800' },
@@ -248,7 +245,7 @@ const Reports = () => {
       <BarChart2 className="h-10 w-10 text-muted-foreground" />
     </div>
   );
-  
+
   return (
     <PageTemplate 
       title="Analytics & Reports" 
@@ -256,7 +253,6 @@ const Reports = () => {
       icon={<LineChart className="h-6 w-6" />}
     >
       <div className="space-y-6">
-        {/* Action Bar */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="grid grid-cols-1 sm:flex gap-2 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-64">
@@ -320,7 +316,6 @@ const Reports = () => {
           </div>
         </div>
 
-        {/* Reports Tabs and Content */}
         <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-4 w-full overflow-x-auto flex whitespace-nowrap">
             <TabsTrigger value="overview" className="flex items-center gap-2">
@@ -752,7 +747,7 @@ const Reports = () => {
               <Card>
                 <CardHeader>
                   <CardTitle>Operational Efficiency</CardTitle>
-                  <CardDescription>Operational efficiency metrics</CardHeader>
+                  <CardDescription>Operational efficiency metrics</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ChartPlaceholder />
