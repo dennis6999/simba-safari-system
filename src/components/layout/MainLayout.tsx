@@ -14,12 +14,14 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // Auto-collapse sidebar on mobile devices
+  // Only auto-collapse sidebar on initial load for mobile devices
   useEffect(() => {
     if (isMobile) {
       setSidebarCollapsed(true);
+    } else {
+      setSidebarCollapsed(false);
     }
-  }, [isMobile]);
+  }, []); // Only run on initial mount
 
   const toggleSidebar = () => {
     if (isMobile) {

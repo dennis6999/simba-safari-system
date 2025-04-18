@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/layout/PageTemplate';
 import { 
-  Shield, Search, Filter, Bell, AlertTriangle, MapPin, Camera, 
-  Clock, User, ChevronDown, AlertCircle, CheckCircle2, 
-  FileText, Calendar, ArrowUpDown, Info
+  ShieldAlert, Search, Filter, Eye, Calendar, MapPin, Camera, AlertTriangle, 
+  User, ChevronDown, Plus, Activity, Lock, Siren, Bell, Users, 
+  FileText, Map, CheckCircle, AlarmClockCheck, CircleCheck, BarChart,
+  Shield, ArrowUpRightSquare, AlarmCheck, LayoutGrid, ListFilter, Clock
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,266 +16,232 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/hooks/use-toast';
 
 const Security = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState('incidents');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [locationFilter, setLocationFilter] = useState('all');
+  const [sectorFilter, setSectorFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Sample security incident data
+  
+  // Sample incident data
   const incidents = [
     {
       id: 'INC-2025-001',
-      title: 'Poaching Attempt in Sector 4',
-      description: 'Rangers reported signs of a potential poaching attempt targeting rhinos in Sector 4. Footprints and discarded equipment found near the watering hole.',
-      status: 'open',
-      priority: 'high',
+      title: 'Perimeter Breach Detected',
+      description: 'Motion detected near Sector 4 fence line. Possible animal or human intrusion.',
       location: 'Sector 4',
-      date: '2025-04-15',
-      time: '02:30',
-      reporter: {
-        id: 101,
-        name: 'Ranger David',
-        avatar: 'https://i.pravatar.cc/150?img=5'
+      time: '2025-04-18T03:45:00',
+      assignedTo: {
+        id: 301,
+        name: 'Ranger Emily',
+        image: 'https://i.pravatar.cc/150?img=12'
       },
-      category: 'poaching',
-      updates: 3,
-      attachments: 2
+      status: 'active',
+      priority: 'high',
+      category: 'perimeter'
     },
     {
       id: 'INC-2025-002',
-      title: 'Suspicious Vehicle Sighted Near North Gate',
-      description: 'A black SUV with unknown license plates was seen multiple times near the North Gate after hours. Driver could not be identified.',
+      title: 'Suspicious Vehicle Sighted',
+      description: 'Unidentified vehicle observed near the park entrance after hours.',
+      location: 'Park Entrance',
+      time: '2025-04-19T22:12:00',
+      assignedTo: {
+        id: 302,
+        name: 'Officer Kevin',
+        image: 'https://i.pravatar.cc/150?img=13'
+      },
       status: 'investigating',
       priority: 'medium',
-      location: 'North Gate',
-      date: '2025-04-14',
-      time: '22:15',
-      reporter: {
-        id: 102,
-        name: 'Guard James',
-        avatar: 'https://i.pravatar.cc/150?img=8'
-      },
-      category: 'trespassing',
-      updates: 5,
-      attachments: 1
+      category: 'vehicle'
     },
     {
       id: 'INC-2025-003',
-      title: 'Fence Breach Detected on Western Perimeter',
-      description: 'Automated sensors detected a breach in the perimeter fence on the western side. Animal escape suspected.',
-      status: 'resolved',
-      priority: 'low',
-      location: 'Western Perimeter',
-      date: '2025-04-13',
-      time: '06:40',
-      reporter: {
-        id: 103,
-        name: 'Technician Sarah',
-        avatar: 'https://i.pravatar.cc/150?img=12'
+      title: 'Camera Offline',
+      description: 'Camera 7 in Sector 9 is offline. Possible malfunction or tampering.',
+      location: 'Sector 9',
+      time: '2025-04-20T08:00:00',
+      assignedTo: {
+        id: 301,
+        name: 'Ranger Emily',
+        image: 'https://i.pravatar.cc/150?img=12'
       },
-      category: 'infrastructure',
-      updates: 2,
-      attachments: 0
+      status: 'active',
+      priority: 'medium',
+      category: 'camera'
     },
     {
       id: 'INC-2025-004',
-      title: 'Unusual Animal Behavior Reported in Sector 7',
-      description: 'Tourists reported unusual aggressive behavior from a pack of wild dogs in Sector 7. Possible rabies outbreak suspected.',
-      status: 'open',
-      priority: 'high',
-      location: 'Sector 7',
-      date: '2025-04-12',
-      time: '14:55',
-      reporter: {
-        id: 104,
-        name: 'Guide Peter',
-        avatar: 'https://i.pravatar.cc/150?img=15'
+      title: 'False Alarm - Animal Crossing',
+      description: 'Motion sensors triggered by a herd of elephants crossing Sector 2.',
+      location: 'Sector 2',
+      time: '2025-04-21T01:55:00',
+      assignedTo: {
+        id: 302,
+        name: 'Officer Kevin',
+        image: 'https://i.pravatar.cc/150?img=13'
       },
-      category: 'wildlife',
-      updates: 4,
-      attachments: 3
+      status: 'false-alarm',
+      priority: 'low',
+      category: 'animal'
     },
     {
       id: 'INC-2025-005',
-      title: 'Equipment Theft from Research Station',
-      description: 'Various pieces of research equipment, including cameras and GPS trackers, were stolen from the main research station.',
-      status: 'investigating',
-      priority: 'medium',
-      location: 'Research Station',
-      date: '2025-04-11',
-      time: '09:20',
-      reporter: {
-        id: 105,
-        name: 'Scientist John',
-        avatar: 'https://i.pravatar.cc/150?img=18'
+      title: 'Gate Lock Damaged',
+      description: 'Lock on the main gate to the research area is damaged. Possible attempted entry.',
+      location: 'Research Area Gate',
+      time: '2025-04-22T06:30:00',
+      assignedTo: {
+        id: 301,
+        name: 'Ranger Emily',
+        image: 'https://i.pravatar.cc/150?img=12'
       },
-      category: 'theft',
-      updates: 1,
-      attachments: 1
-    },
-    {
-      id: 'INC-2025-006',
-      title: 'Drone Sighting Over Restricted Area',
-      description: 'A drone was spotted flying over a restricted breeding area. Operator unknown.',
-      status: 'open',
-      priority: 'medium',
-      location: 'Breeding Area',
-      date: '2025-04-10',
-      time: '17:40',
-      reporter: {
-        id: 101,
-        name: 'Ranger David',
-        avatar: 'https://i.pravatar.cc/150?img=5'
-      },
-      category: 'surveillance',
-      updates: 2,
-      attachments: 0
-    },
-    {
-      id: 'INC-2025-007',
-      title: 'Vandalism at Visitor Center',
-      description: 'Graffiti and minor damage reported at the main visitor center.',
       status: 'resolved',
-      priority: 'low',
+      priority: 'high',
+      category: 'access'
+    }
+  ];
+
+  // Sample alerts data  
+  const alerts = [
+    {
+      id: 'ALRT-2025-001',
+      title: 'High Activity Zone Detected',
+      description: 'Unusual concentration of animal movement in Sector 6.',
+      location: 'Sector 6',
+      time: '2025-04-18T14:22:00',
+      type: 'animal',
+      severity: 'warning'
+    },
+    {
+      id: 'ALRT-2025-002',
+      title: 'Perimeter Sensor Triggered',
+      description: 'Sensor 12 near the north fence line triggered. Investigate possible breach.',
+      location: 'North Fence Line',
+      time: '2025-04-19T01:18:00',
+      type: 'perimeter',
+      severity: 'critical'
+    },
+    {
+      id: 'ALRT-2025-003',
+      title: 'Vehicle Speeding',
+      description: 'Vehicle exceeding speed limit on main road. License plate KWS-789.',
+      location: 'Main Road',
+      time: '2025-04-20T11:55:00',
+      type: 'vehicle',
+      severity: 'minor'
+    },
+    {
+      id: 'ALRT-2025-004',
+      title: 'Camera Tampering',
+      description: 'Camera 3 in Sector 2 shows signs of physical tampering. Check for damage.',
+      location: 'Sector 2',
+      time: '2025-04-21T09:30:00',
+      type: 'camera',
+      severity: 'warning'
+    },
+    {
+      id: 'ALRT-2025-005',
+      title: 'Unusual Sound Detected',
+      description: 'High-pitched sound detected near the visitor center. Source unknown.',
       location: 'Visitor Center',
-      date: '2025-04-09',
-      time: '21:00',
-      reporter: {
-        id: 102,
-        name: 'Guard James',
-        avatar: 'https://i.pravatar.cc/150?img=8'
-      },
-      category: 'vandalism',
-      updates: 3,
-      attachments: 2
+      time: '2025-04-22T16:48:00',
+      type: 'sound',
+      severity: 'minor'
     },
     {
-      id: 'INC-2025-008',
-      title: 'Illegal Campfire Detected',
-      description: 'An illegal campfire was detected in a non-designated camping area. Fire extinguished, area secured.',
-      status: 'resolved',
-      priority: 'low',
-      location: 'Undesignated Area',
-      date: '2025-04-08',
-      time: '03:15',
-      reporter: {
-        id: 103,
-        name: 'Technician Sarah',
-        avatar: 'https://i.pravatar.cc/150?img=12'
-      },
-      category: 'fire',
-      updates: 1,
-      attachments: 0
+      id: 'ALRT-2025-006',
+      title: 'Perimeter Sensor Triggered',
+      description: 'Sensor 12 near the north fence line triggered. Investigate possible breach.',
+      location: 'North Fence Line',
+      time: '2025-04-19T01:18:00',
+      type: 'perimeter',
+      severity: 'critical'
     },
     {
-      id: 'INC-2025-009',
-      title: 'Stray Animal Found Near Housing',
-      description: 'A stray domestic dog was found wandering near staff housing. Animal taken to shelter.',
-      status: 'closed',
-      priority: 'low',
-      location: 'Staff Housing',
-      date: '2025-04-07',
-      time: '11:30',
-      reporter: {
-        id: 104,
-        name: 'Guide Peter',
-        avatar: 'https://i.pravatar.cc/150?img=15'
-      },
-      category: 'animal',
-      updates: 2,
-      attachments: 1
-    },
-    {
-      id: 'INC-2025-010',
-      title: 'Security Drill Conducted Successfully',
-      description: 'A scheduled security drill was conducted to test response times and coordination. All objectives met.',
-      status: 'closed',
-      priority: 'low',
-      location: 'Multiple Locations',
-      date: '2025-04-06',
-      time: '15:00',
-      reporter: {
-        id: 105,
-        name: 'Scientist John',
-        avatar: 'https://i.pravatar.cc/150?img=18'
-      },
-      category: 'training',
-      updates: 0,
-      attachments: 0
+      id: 'ALRT-2025-007',
+      title: 'Vehicle Speeding',
+      description: 'Vehicle exceeding speed limit on main road. License plate KWS-789.',
+      location: 'Main Road',
+      time: '2025-04-20T11:55:00',
+      type: 'vehicle',
+      severity: 'minor'
     }
   ];
 
-  // Sample security objectives data
-  const objectives = [
-    {
-      id: 'OBJ-2025-001',
-      title: 'Reduce Poaching Incidents',
-      description: 'Decrease the number of poaching incidents by 15% compared to the previous year.',
-      current: '85',
-      target: 100,
-      status: 'on-track'
-    },
-    {
-      id: 'OBJ-2025-002',
-      title: 'Improve Response Time to Incidents',
-      description: 'Decrease the average response time to security incidents by 20%.',
-      current: '75',
-      target: 100,
-      status: 'at-risk'
-    },
-    {
-      id: 'OBJ-2025-003',
-      title: 'Enhance Perimeter Security',
-      description: 'Upgrade perimeter security measures to cover 95% of the park boundaries.',
-      current: '90',
-      target: 100,
-      status: 'on-track'
-    },
-    {
-      id: 'OBJ-2025-004',
-      title: 'Increase Staff Training Hours',
-      description: 'Increase the total number of security staff training hours by 25%.',
-      current: '60',
-      target: 100,
-      status: 'off-track'
-    }
-  ];
+  // Handler functions
+  const handleFilterClick = () => {
+    toast({
+      title: "Advanced Filters",
+      description: "Advanced filter options would appear here",
+    });
+  };
 
-  // Get unique locations for filter
-  const locations = [...new Set(incidents.map(incident => incident.location))];
+  const handleNewIncident = () => {
+    toast({
+      title: "Create New Incident",
+      description: "Opening incident creation form",
+    });
+  };
 
-  // Filter incidents based on active tab, status, location and search query
+  const handleIncidentAction = (action: string, incidentId: string) => {
+    toast({
+      title: `Incident Action: ${action}`,
+      description: `Action '${action}' performed on incident ${incidentId}`,
+    });
+  };
+
+  const handlePagination = (direction: 'prev' | 'next') => {
+    toast({
+      title: `Pagination: ${direction === 'prev' ? 'Previous' : 'Next'} Page`,
+      description: `Navigating to ${direction === 'prev' ? 'previous' : 'next'} page of results`,
+    });
+  };
+
+  const handleViewAll = (section: string) => {
+    toast({
+      title: `View All ${section}`,
+      description: `Navigating to all ${section} view`,
+    });
+  };
+
+  const handleMapView = () => {
+    toast({
+      title: "Map View",
+      description: "Switching to map view of incidents and alerts",
+    });
+  };
+
+  const handleViewLayout = (layout: string) => {
+    toast({
+      title: `View Layout: ${layout}`,
+      description: `Switching to ${layout} layout`,
+    });
+  };
+
+  // Filter incidents based on status, sector and search query
   const filteredIncidents = incidents.filter(incident => {
-    // Filter by tab (status)
-    const matchesTab = activeTab === 'all' || incident.status === activeTab;
-
-    // Filter by status
     const matchesStatus = statusFilter === 'all' || incident.status === statusFilter;
-
-    // Filter by location
-    const matchesLocation = locationFilter === 'all' || incident.location === locationFilter;
-
-    // Filter by search query
+    const matchesSector = sectorFilter === 'all' || incident.location.includes(sectorFilter.charAt(0).toUpperCase() + sectorFilter.slice(1));
     const matchesSearch = searchQuery === '' ||
       incident.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      incident.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      incident.id.toLowerCase().includes(searchQuery.toLowerCase());
+      incident.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesTab && matchesStatus && matchesLocation && matchesSearch;
+    return matchesStatus && matchesSector && matchesSearch;
   });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'open':
-        return <Badge variant="outline" className="text-red-500 border-red-500">Open</Badge>;
+      case 'active':
+        return <Badge variant="destructive">Active</Badge>;
       case 'investigating':
         return <Badge className="bg-amber-500 hover:bg-amber-600">Investigating</Badge>;
       case 'resolved':
         return <Badge className="bg-green-500 hover:bg-green-600">Resolved</Badge>;
-      case 'closed':
-        return <Badge variant="secondary">Closed</Badge>;
+      case 'false-alarm':
+        return <Badge variant="secondary">False Alarm</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -295,16 +262,11 @@ const Security = () => {
 
   const getCategoryBadge = (category: string) => {
     const categoryMap: {[key: string]: {label: string, color: string}} = {
-      'poaching': { label: 'Poaching', color: 'bg-red-100 text-red-800' },
-      'trespassing': { label: 'Trespassing', color: 'bg-amber-100 text-amber-800' },
-      'infrastructure': { label: 'Infrastructure', color: 'bg-blue-100 text-blue-800' },
-      'wildlife': { label: 'Wildlife', color: 'bg-green-100 text-green-800' },
-      'theft': { label: 'Theft', color: 'bg-purple-100 text-purple-800' },
-      'surveillance': { label: 'Surveillance', color: 'bg-indigo-100 text-indigo-800' },
-      'vandalism': { label: 'Vandalism', color: 'bg-gray-100 text-gray-800' },
-      'fire': { label: 'Fire', color: 'bg-orange-100 text-orange-800' },
-      'animal': { label: 'Animal', color: 'bg-teal-100 text-teal-800' },
-      'training': { label: 'Training', color: 'bg-pink-100 text-pink-800' }
+      'perimeter': { label: 'Perimeter', color: 'bg-blue-100 text-blue-800' },
+      'vehicle': { label: 'Vehicle', color: 'bg-green-100 text-green-800' },
+      'camera': { label: 'Camera', color: 'bg-red-100 text-red-800' },
+      'animal': { label: 'Animal', color: 'bg-purple-100 text-purple-800' },
+      'access': { label: 'Access', color: 'bg-yellow-100 text-yellow-800' }
     };
 
     const categoryInfo = categoryMap[category] || { label: category, color: 'bg-gray-100 text-gray-800' };
@@ -316,17 +278,29 @@ const Security = () => {
     );
   };
 
-  // Convert string values to numbers for comparisons
-  const calculateProgress = (current: number | string, target: number): number => {
-    const currentValue = typeof current === 'string' ? parseFloat(current) : current;
-    return Math.min(Math.round((currentValue / target) * 100), 100);
-  };
+  const getAlertTypeBadge = (type: string) => {
+    const typeMap: {[key: string]: {label: string, color: string}} = {
+      'animal': { label: 'Animal Activity', color: 'bg-blue-100 text-blue-800' },
+      'perimeter': { label: 'Perimeter Breach', color: 'bg-red-100 text-red-800' },
+      'vehicle': { label: 'Vehicle Alert', color: 'bg-green-100 text-green-800' },
+      'camera': { label: 'Camera Issue', color: 'bg-purple-100 text-purple-800' },
+      'sound': { label: 'Sound Anomaly', color: 'bg-yellow-100 text-yellow-800' }
+    };
 
+    const typeInfo = typeMap[type] || { label: type, color: 'bg-gray-100 text-gray-800' };
+
+    return (
+      <Badge variant="secondary" className={typeInfo.color}>
+        {typeInfo.label}
+      </Badge>
+    );
+  };
+  
   return (
-    <PageTemplate
-      title="Security Management"
-      description="Monitor and manage security incidents and objectives"
-      icon={<Shield className="h-6 w-6" />}
+    <PageTemplate 
+      title="Security Management" 
+      description="Monitor and manage security operations"
+      icon={<ShieldAlert className="h-6 w-6" />}
     >
       <div className="space-y-6">
         {/* Action Bar */}
@@ -334,108 +308,121 @@ const Security = () => {
           <div className="grid grid-cols-1 sm:flex gap-2 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-64">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search incidents..."
+              <Input 
+                placeholder="Search incidents..." 
                 className="pl-8 w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <div className="grid grid-cols-2 sm:flex gap-2">
-              <Select
-                value={statusFilter}
-                onValueChange={setStatusFilter}
-              >
-                <SelectTrigger className="w-full sm:w-40">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="open">Open</SelectItem>
-                  <SelectItem value="investigating">Investigating</SelectItem>
-                  <SelectItem value="resolved">Resolved</SelectItem>
-                  <SelectItem value="closed">Closed</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button variant="outline" className="w-full sm:w-auto">
+              <div className="w-full">
+                <Select 
+                  value={statusFilter} 
+                  onValueChange={setStatusFilter}
+                >
+                  <SelectTrigger className="w-full sm:w-40">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="investigating">Investigating</SelectItem>
+                    <SelectItem value="resolved">Resolved</SelectItem>
+                    <SelectItem value="false-alarm">False Alarm</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button variant="outline" className="w-full sm:w-auto" onClick={handleFilterClick}>
                 <Filter className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Filter</span>
               </Button>
             </div>
           </div>
           <div className="flex gap-2">
-            <div className="w-full sm:w-48">
-              <Select
-                value={locationFilter}
-                onValueChange={setLocationFilter}
+            <div className="w-full sm:w-40">
+              <Select 
+                value={sectorFilter} 
+                onValueChange={setSectorFilter}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Location" />
+                  <SelectValue placeholder="Sector" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Locations</SelectItem>
-                  {locations.map(location => (
-                    <SelectItem key={location} value={location}>
-                      {location}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="all">All Sectors</SelectItem>
+                  <SelectItem value="north">North Sector</SelectItem>
+                  <SelectItem value="south">South Sector</SelectItem>
+                  <SelectItem value="east">East Sector</SelectItem>
+                  <SelectItem value="west">West Sector</SelectItem>
+                  <SelectItem value="central">Central Sector</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <Button className="w-full sm:w-auto">
-              <AlertTriangle className="h-4 w-4 sm:mr-2" />
+            <Button className="w-full sm:w-auto" onClick={handleNewIncident}>
+              <Plus className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">New Incident</span>
             </Button>
           </div>
         </div>
 
         {/* Security Tabs and Content */}
-        <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4 w-full sm:w-auto overflow-x-auto">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" /> Overview
+        <Tabs defaultValue="incidents" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="mb-4 w-full overflow-x-auto flex whitespace-nowrap">
+            <TabsTrigger value="incidents" className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" /> Incidents
             </TabsTrigger>
-            <TabsTrigger value="all" className="flex items-center gap-2">
-              <AlertCircle className="h-4 w-4" /> All Incidents <Badge variant="secondary" className="ml-1">{incidents.length}</Badge>
+            <TabsTrigger value="alerts" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" /> Alerts
             </TabsTrigger>
-            <TabsTrigger value="open" className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" /> Open <Badge variant="secondary" className="ml-1">{incidents.filter(i => i.status === 'open').length}</Badge>
+            <TabsTrigger value="patrols" className="flex items-center gap-2">
+              <Users className="h-4 w-4" /> Patrols
             </TabsTrigger>
-            <TabsTrigger value="investigating" className="flex items-center gap-2">
-              <Search className="h-4 w-4" /> Investigating <Badge variant="secondary" className="ml-1">{incidents.filter(i => i.status === 'investigating').length}</Badge>
+            <TabsTrigger value="cameras" className="flex items-center gap-2">
+              <Camera className="h-4 w-4" /> Cameras
             </TabsTrigger>
-            <TabsTrigger value="resolved" className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4" /> Resolved <Badge variant="secondary" className="ml-1">{incidents.filter(i => i.status === 'resolved').length}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="closed" className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4" /> Closed <Badge variant="secondary" className="ml-1">{incidents.filter(i => i.status === 'closed').length}</Badge>
+            <TabsTrigger value="reports" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" /> Reports
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value={activeTab} className="space-y-4">
+          <TabsContent value="incidents" className="space-y-4">
             <Card>
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-center">
                   <div>
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <Shield className="h-5 w-5" />
-                      {activeTab === 'overview' ? 'Security Overview' :
-                       activeTab === 'all' ? 'All Incidents' :
-                       activeTab === 'open' ? 'Open Incidents' :
-                       activeTab === 'investigating' ? 'Investigating Incidents' :
-                       activeTab === 'resolved' ? 'Resolved Incidents' : 'Closed Incidents'}
+                      <AlertTriangle className="h-5 w-5" /> Security Incidents
                     </CardTitle>
                     <CardDescription>
                       Showing {filteredIncidents.length} of {incidents.length} incidents
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="hidden sm:flex">
-                      <Calendar className="h-4 w-4 mr-2" /> Calendar View
+                    <Button variant="outline" size="sm" className="hidden sm:flex" onClick={handleMapView}>
+                      <Map className="h-4 w-4 mr-2" /> Map View
                     </Button>
-                    <Button variant="ghost" size="sm" className="hidden sm:flex">
-                      <ArrowUpDown className="h-4 w-4 mr-2" /> Sort
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="hidden sm:flex">
+                          <LayoutGrid className="h-4 w-4 mr-2" /> Layout
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleViewLayout('List View')}>
+                          <ListFilter className="mr-2 h-4 w-4" /> List View
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewLayout('Grid View')}>
+                          <LayoutGrid className="mr-2 h-4 w-4" /> Grid View
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => handleViewLayout('Chronological')}>
+                          <Clock className="mr-2 h-4 w-4" /> Chronological
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewLayout('Priority')}>
+                          <AlertTriangle className="mr-2 h-4 w-4" /> By Priority
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               </CardHeader>
@@ -446,11 +433,11 @@ const Security = () => {
                       <TableHeader>
                         <TableRow>
                           <TableHead className="w-[100px]">ID</TableHead>
-                          <TableHead>Incident</TableHead>
+                          <TableHead>Description</TableHead>
                           <TableHead className="hidden md:table-cell">Location</TableHead>
-                          <TableHead className="hidden lg:table-cell">Reporter</TableHead>
-                          <TableHead className="hidden sm:table-cell">Date/Time</TableHead>
-                          <TableHead>Priority</TableHead>
+                          <TableHead className="hidden md:table-cell">Time</TableHead>
+                          <TableHead className="hidden lg:table-cell">Assigned To</TableHead>
+                          <TableHead>Status</TableHead>
                           <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -462,36 +449,35 @@ const Security = () => {
                               <TableCell>
                                 <div className="font-medium">{incident.title}</div>
                                 <div className="text-xs text-muted-foreground hidden sm:block mt-1">
-                                  {incident.description.length > 50
-                                    ? `${incident.description.substring(0, 50)}...`
-                                    : incident.description}
+                                  {incident.description.substring(0, 60)}...
                                 </div>
                                 <div className="mt-1 flex gap-1">
-                                  {getStatusBadge(incident.status)}
+                                  {getPriorityBadge(incident.priority)}
                                   {getCategoryBadge(incident.category)}
                                 </div>
                               </TableCell>
-                              <TableCell className="hidden md:table-cell">{incident.location}</TableCell>
+                              <TableCell className="hidden md:table-cell">
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="h-3 w-3 text-muted-foreground" />
+                                  <span>{incident.location}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="hidden md:table-cell">
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="h-3 w-3 text-muted-foreground" />
+                                  <span>{new Date(incident.time).toLocaleString()}</span>
+                                </div>
+                              </TableCell>
                               <TableCell className="hidden lg:table-cell">
                                 <div className="flex items-center gap-2">
-                                  <Avatar className="h-8 w-8">
-                                    <AvatarImage src={incident.reporter.avatar} alt={incident.reporter.name} />
-                                    <AvatarFallback>{incident.reporter.name.charAt(0)}</AvatarFallback>
+                                  <Avatar className="h-7 w-7">
+                                    <AvatarImage src={incident.assignedTo?.image} alt={incident.assignedTo?.name} />
+                                    <AvatarFallback>{incident.assignedTo?.name.charAt(0)}</AvatarFallback>
                                   </Avatar>
-                                  <div>
-                                    <div className="text-sm font-medium">{incident.reporter.name}</div>
-                                  </div>
+                                  <span className="text-sm">{incident.assignedTo?.name}</span>
                                 </div>
                               </TableCell>
-                              <TableCell className="hidden sm:table-cell">
-                                <div className="flex items-center gap-1">
-                                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                                  <span>{new Date(incident.date).toLocaleDateString()}</span>
-                                  <Clock className="h-4 w-4 text-muted-foreground ml-2" />
-                                  <span>{incident.time}</span>
-                                </div>
-                              </TableCell>
-                              <TableCell>{getPriorityBadge(incident.priority)}</TableCell>
+                              <TableCell>{getStatusBadge(incident.status)}</TableCell>
                               <TableCell className="text-right">
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
@@ -502,26 +488,19 @@ const Security = () => {
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    <DropdownMenuItem>
-                                      <FileText className="mr-2 h-4 w-4" /> View Details
+                                    <DropdownMenuItem onClick={() => handleIncidentAction('view', incident.id)}>
+                                      <Eye className="mr-2 h-4 w-4" /> View Details
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <MapPin className="mr-2 h-4 w-4" /> View on Map
+                                    <DropdownMenuItem onClick={() => handleIncidentAction('update', incident.id)}>
+                                      <Activity className="mr-2 h-4 w-4" /> Update Status
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <Camera className="mr-2 h-4 w-4" /> Add Media
+                                    <DropdownMenuItem onClick={() => handleIncidentAction('assign', incident.id)}>
+                                      <User className="mr-2 h-4 w-4" /> Reassign
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    {incident.status !== 'closed' && (
-                                      <DropdownMenuItem>
-                                        <CheckCircle2 className="mr-2 h-4 w-4" /> Mark as Resolved
-                                      </DropdownMenuItem>
-                                    )}
-                                    {incident.status === 'resolved' && (
-                                      <DropdownMenuItem>
-                                        <AlertCircle className="mr-2 h-4 w-4" /> Reopen Incident
-                                      </DropdownMenuItem>
-                                    )}
+                                    <DropdownMenuItem onClick={() => handleIncidentAction('resolve', incident.id)}>
+                                      <CheckCircle className="mr-2 h-4 w-4" /> Mark Resolved
+                                    </DropdownMenuItem>
                                   </DropdownMenuContent>
                                 </DropdownMenu>
                               </TableCell>
@@ -544,184 +523,121 @@ const Security = () => {
                   Page 1 of 1
                 </div>
                 <div className="flex gap-1">
-                  <Button variant="outline" size="sm" disabled>Previous</Button>
-                  <Button variant="outline" size="sm" disabled>Next</Button>
+                  <Button variant="outline" size="sm" disabled onClick={() => handlePagination('prev')}>Previous</Button>
+                  <Button variant="outline" size="sm" disabled onClick={() => handlePagination('next')}>Next</Button>
                 </div>
               </CardFooter>
             </Card>
           </TabsContent>
+
+          {/* ... keep existing code (for other tabs) */}
+
+          <TabsContent value="alerts" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="md:col-span-2">
+                <CardHeader>
+                  <CardTitle>Recent Alerts</CardTitle>
+                  <CardDescription>Most recent security alerts from all systems</CardDescription>
+                </CardHeader>
+                <CardContent className="px-2">
+                  <div className="space-y-4">
+                    {alerts.slice(0, 5).map((alert) => (
+                      <div key={alert.id} className="border rounded-lg p-4 space-y-2">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center gap-2">
+                            {getAlertTypeBadge(alert.type)}
+                            <span className="font-medium">{alert.title}</span>
+                          </div>
+                          <Badge>{alert.severity}</Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{alert.description}</p>
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            <span>{alert.location}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            <span>{new Date(alert.time).toLocaleString()}</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <Button variant="outline" size="sm" onClick={() => handleIncidentAction('respond', alert.id)}>
+                            Respond
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleIncidentAction('dismiss', alert.id)}>
+                            Dismiss
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    <Button variant="outline" className="w-full" onClick={() => handleViewAll('Alerts')}>
+                      View All Alerts
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* ... keep existing code (for Security Status card) */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Security Status</CardTitle>
+                  <CardDescription>Overall security health of the park</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center justify-center">
+                  <CircleCheck className="h-10 w-10 text-green-500" />
+                  <div className="text-2xl font-semibold mt-2">All Systems Nominal</div>
+                  <div className="text-sm text-muted-foreground">Last checked: 2025-04-22 17:30</div>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full">
+                    View Detailed Status
+                  </Button>
+                </CardFooter>
+              </Card>
+
+              <div className="grid grid-cols-1 md:col-span-3 gap-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Security Metrics</CardTitle>
+                    <CardDescription>Real-time security performance indicators</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                      {[
+                        { title: 'Response Time', value: '4.2 min', icon: <Clock className="h-4 w-4" />, change: '-12%', positive: true },
+                        { title: 'Incidents This Month', value: '24', icon: <AlertTriangle className="h-4 w-4" />, change: '+8%', positive: false },
+                        { title: 'Perimeter Breaches', value: '3', icon: <Activity className="h-4 w-4" />, change: '-25%', positive: true },
+                        { title: 'Active Patrols', value: '6', icon: <Users className="h-4 w-4" />, change: '+2', positive: true }
+                      ].map((metric, idx) => (
+                        <Card key={idx} className="bg-muted/50">
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col gap-1">
+                                <span className="text-sm text-muted-foreground flex items-center gap-1">
+                                  {metric.icon} {metric.title}
+                                </span>
+                                <span className="text-2xl font-semibold">{metric.value}</span>
+                              </div>
+                              <div className={`text-xs ${metric.positive ? 'text-green-500' : 'text-red-500'}`}>
+                                {metric.change}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="outline" className="w-full" onClick={() => handleViewAll('Metrics')}>
+                      View Detailed Metrics
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
         </Tabs>
-
-        {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Incident Status Distribution</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="flex items-center">
-                      <span className="h-3 w-3 rounded-full bg-red-500 mr-2"></span>
-                      Open
-                    </span>
-                    <span>{incidents.filter(i => i.status === 'open').length} incidents</span>
-                  </div>
-                  <Progress value={incidents.filter(i => i.status === 'open').length / incidents.length * 100} className="h-2 bg-red-100" />
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="flex items-center">
-                      <span className="h-3 w-3 rounded-full bg-amber-500 mr-2"></span>
-                      Investigating
-                    </span>
-                    <span>{incidents.filter(i => i.status === 'investigating').length} incidents</span>
-                  </div>
-                  <Progress value={incidents.filter(i => i.status === 'investigating').length / incidents.length * 100} className="h-2 bg-amber-100" />
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="flex items-center">
-                      <span className="h-3 w-3 rounded-full bg-green-500 mr-2"></span>
-                      Resolved
-                    </span>
-                    <span>{incidents.filter(i => i.status === 'resolved').length} incidents</span>
-                  </div>
-                  <Progress value={incidents.filter(i => i.status === 'resolved').length / incidents.length * 100} className="h-2 bg-green-100" />
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="flex items-center">
-                      <span className="h-3 w-3 rounded-full bg-gray-500 mr-2"></span>
-                      Closed
-                    </span>
-                    <span>{incidents.filter(i => i.status === 'closed').length} incidents</span>
-                  </div>
-                  <Progress value={incidents.filter(i => i.status === 'closed').length / incidents.length * 100} className="h-2 bg-gray-100" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Security Objectives</CardTitle>
-              <CardDescription>Progress towards key security goals</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {objectives.map((objective) => {
-                  const progress = calculateProgress(objective.current, objective.target);
-                  return (
-                    <div key={objective.id} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <h3 className="text-sm font-medium">{objective.title}</h3>
-                        <Badge variant="outline" className={
-                          objective.status === 'on-track' ? 'text-green-500 border-green-500' :
-                          objective.status === 'at-risk' ? 'text-amber-500 border-amber-500' : 'text-red-500 border-red-500'
-                        }>
-                          {objective.status.replace('-', ' ')}
-                        </Badge>
-                      </div>
-                      <div className="text-xs text-muted-foreground">{objective.description}</div>
-                      <div className="flex justify-between text-sm">
-                        <span>{progress}% Complete</span>
-                      </div>
-                      <Progress value={progress} className="h-2" />
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Recent Incidents by Location</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {locations.map((location, idx) => {
-                  const locationIncidentCount = incidents.filter(i => i.location === location).length;
-                  const locationColors = [
-                    'bg-blue-500', 'bg-purple-500', 'bg-amber-500',
-                    'bg-green-500', 'bg-red-500', 'bg-indigo-500'
-                  ];
-                  const locationBgColors = [
-                    'bg-blue-100', 'bg-purple-100', 'bg-amber-100',
-                    'bg-green-100', 'bg-red-100', 'bg-indigo-100'
-                  ];
-                  return (
-                    <div key={location}>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="flex items-center">
-                          <MapPin className={`h-3 w-3 text-muted-foreground mr-2`} />
-                          {location}
-                        </span>
-                        <span>{locationIncidentCount} incidents</span>
-                      </div>
-                      <Progress
-                        value={locationIncidentCount / incidents.length * 100}
-                        className={`h-2 ${locationBgColors[idx % locationBgColors.length]}`}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Security Alerts</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {[
-                  { message: 'Perimeter breach detected in Sector 4', time: '5 minutes ago', type: 'critical' },
-                  { message: 'Suspicious activity near visitor center', time: '15 minutes ago', type: 'warning' },
-                  { message: 'Security drill scheduled for tomorrow', time: '30 minutes ago', type: 'info' }
-                ].map((alert, idx) => {
-                  let icon;
-                  let colorClass;
-
-                  switch (alert.type) {
-                    case 'critical':
-                      icon = <AlertTriangle className="h-4 w-4 text-red-500" />;
-                      colorClass = 'text-red-500';
-                      break;
-                    case 'warning':
-                      icon = <AlertTriangle className="h-4 w-4 text-amber-500" />;
-                      colorClass = 'text-amber-500';
-                      break;
-                    case 'info':
-                      icon = <Info className="h-4 w-4 text-blue-500" />;
-                      colorClass = 'text-blue-500';
-                      break;
-                    default:
-                      icon = <Bell className="h-4 w-4 text-gray-500" />;
-                      colorClass = 'text-gray-500';
-                      break;
-                  }
-
-                  return (
-                    <div key={idx} className="flex items-center justify-between p-2 border rounded-md">
-                      <div className="flex items-center gap-2">
-                        {icon}
-                        <span className="text-sm">{alert.message}</span>
-                      </div>
-                      <div className="text-xs text-muted-foreground">{alert.time}</div>
-                    </div>
-                  );
-                })}
-                <Button variant="ghost" size="sm" className="w-full mt-2">
-                  <Bell className="h-4 w-4 mr-2" /> View All Alerts
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </PageTemplate>
   );

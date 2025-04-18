@@ -4,7 +4,7 @@ import {
   CheckSquare, Search, Filter, Calendar, Clock, 
   AlertCircle, User, ChevronDown, PlusCircle, CheckCircle2,
   CircleX, CalendarDays, CalendarClock, ListChecks, Tags, Clipboard,
-  ClipboardList, SlidersHorizontal, Users, Bell, BookOpen
+  ClipboardList, SlidersHorizontal, Users, Bell, BookOpen, ArrowDownUp
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,14 +15,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/hooks/use-toast';
 
 const Tasks = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [assigneeFilter, setAssigneeFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Sample task data
   const tasks = [
     {
       id: 'TASK-2025-001',
@@ -196,21 +198,12 @@ const Tasks = () => {
     }
   ];
 
-  // Get unique assignees for filter
   const assignees = [...new Set(tasks.map(task => task.assignee.name))];
 
-  // Filter tasks based on active tab, status, assignee and search query
   const filteredTasks = tasks.filter(task => {
-    // Filter by tab (status)
     const matchesTab = activeTab === 'all' || task.status === activeTab;
-
-    // Filter by status
     const matchesStatus = statusFilter === 'all' || task.status === statusFilter;
-
-    // Filter by assignee
     const matchesAssignee = assigneeFilter === 'all' || task.assignee.name === assigneeFilter;
-
-    // Filter by search query
     const matchesSearch = searchQuery === '' ||
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -218,7 +211,7 @@ const Tasks = () => {
 
     return matchesTab && matchesStatus && matchesAssignee && matchesSearch;
   });
-  
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'open':
@@ -264,6 +257,55 @@ const Tasks = () => {
     );
   };
 
+  const handleNewTask = () => {
+    toast({
+      title: "Create New Task",
+      description: "The new task form would open here",
+    });
+  };
+
+  const handleFilterClick = () => {
+    toast({
+      title: "Advanced Filters",
+      description: "Advanced filter options would appear here",
+    });
+  };
+
+  const handleSortClick = () => {
+    toast({
+      title: "Sort Options",
+      description: "Sort options would appear here",
+    });
+  };
+
+  const handleCalendarView = () => {
+    toast({
+      title: "Calendar View",
+      description: "Switching to calendar view of tasks",
+    });
+  };
+
+  const handleTaskAction = (action: string, taskId: string) => {
+    toast({
+      title: `Task Action: ${action}`,
+      description: `Action '${action}' performed on task ${taskId}`,
+    });
+  };
+
+  const handlePagination = (direction: 'prev' | 'next') => {
+    toast({
+      title: `Pagination: ${direction === 'prev' ? 'Previous' : 'Next'} Page`,
+      description: `Navigating to ${direction === 'prev' ? 'previous' : 'next'} page of results`,
+    });
+  };
+
+  const handleViewAll = (section: string) => {
+    toast({
+      title: `View All ${section}`,
+      description: `Navigate to full ${section} view`,
+    });
+  };
+
   return (
     <PageTemplate 
       title="Task Management" 
@@ -271,7 +313,6 @@ const Tasks = () => {
       icon={<CheckSquare className="h-6 w-6" />}
     >
       <div className="space-y-6">
-        {/* Action Bar */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="grid grid-cols-1 sm:flex gap-2 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-64">
@@ -284,22 +325,24 @@ const Tasks = () => {
               />
             </div>
             <div className="grid grid-cols-2 sm:flex gap-2">
-              <Select 
-                value={statusFilter} 
-                onValueChange={setStatusFilter}
-              >
-                <SelectTrigger className="w-full sm:w-40">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="open">Open</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="blocked">Blocked</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button variant="outline" className="w-full sm:w-auto">
+              <div className="w-full">
+                <Select 
+                  value={statusFilter} 
+                  onValueChange={setStatusFilter}
+                >
+                  <SelectTrigger className="w-full sm:w-40">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="open">Open</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="blocked">Blocked</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button variant="outline" className="w-full sm:w-auto" onClick={handleFilterClick}>
                 <Filter className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Filter</span>
               </Button>
@@ -324,16 +367,15 @@ const Tasks = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto" onClick={handleNewTask}>
               <PlusCircle className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">New Task</span>
             </Button>
           </div>
         </div>
 
-        {/* Task Tabs and Content */}
         <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4 w-full sm:w-auto overflow-x-auto">
+          <TabsList className="mb-4 w-full overflow-x-auto flex whitespace-nowrap">
             <TabsTrigger value="all" className="flex items-center gap-2">
               <ListChecks className="h-4 w-4" /> All Tasks <Badge variant="secondary" className="ml-1">{tasks.length}</Badge>
             </TabsTrigger>
@@ -368,10 +410,10 @@ const Tasks = () => {
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="hidden sm:flex">
+                    <Button variant="outline" size="sm" className="hidden sm:flex" onClick={handleCalendarView}>
                       <CalendarDays className="h-4 w-4 mr-2" /> Calendar View
                     </Button>
-                    <Button variant="ghost" size="sm" className="hidden sm:flex">
+                    <Button variant="ghost" size="sm" className="hidden sm:flex" onClick={handleSortClick}>
                       <ArrowDownUp className="h-4 w-4 mr-2" /> Sort
                     </Button>
                   </div>
@@ -438,23 +480,23 @@ const Tasks = () => {
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => handleTaskAction('view', task.id)}>
                                       <ClipboardList className="mr-2 h-4 w-4" /> View Details
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => handleTaskAction('edit-tags', task.id)}>
                                       <Tags className="mr-2 h-4 w-4" /> Edit Tags
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => handleTaskAction('change-due-date', task.id)}>
                                       <CalendarDays className="mr-2 h-4 w-4" /> Change Due Date
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     {task.status !== 'completed' && (
-                                      <DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => handleTaskAction('complete', task.id)}>
                                         <CheckCircle2 className="mr-2 h-4 w-4" /> Mark as Completed
                                       </DropdownMenuItem>
                                     )}
                                     {task.status === 'completed' && (
-                                      <DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => handleTaskAction('reopen', task.id)}>
                                         <AlertCircle className="mr-2 h-4 w-4" /> Reopen Task
                                       </DropdownMenuItem>
                                     )}
@@ -480,15 +522,14 @@ const Tasks = () => {
                   Page 1 of 1
                 </div>
                 <div className="flex gap-1">
-                  <Button variant="outline" size="sm" disabled>Previous</Button>
-                  <Button variant="outline" size="sm" disabled>Next</Button>
+                  <Button variant="outline" size="sm" disabled onClick={() => handlePagination('prev')}>Previous</Button>
+                  <Button variant="outline" size="sm" disabled onClick={() => handlePagination('next')}>Next</Button>
                 </div>
               </CardFooter>
             </Card>
           </TabsContent>
         </Tabs>
 
-        {/* Dashboard Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
@@ -594,7 +635,7 @@ const Tasks = () => {
                       {getPriorityBadge(task.priority)}
                     </div>
                   ))}
-                <Button variant="ghost" size="sm" className="w-full mt-2">
+                <Button variant="ghost" size="sm" className="w-full mt-2" onClick={() => handleViewAll('Deadlines')}>
                   <CalendarDays className="h-4 w-4 mr-2" /> View All Deadlines
                 </Button>
               </div>
@@ -613,7 +654,6 @@ const Tasks = () => {
                     <div key={assignee} className="flex items-center justify-between p-2 border rounded-md">
                       <div className="flex items-center gap-2">
                         <Avatar className="h-7 w-7">
-                          {/* Assuming assignees are unique and can be used as key */}
                           <AvatarImage src={`https://i.pravatar.cc/150?name=${assignee}`} alt={assignee} />
                           <AvatarFallback>{assignee.charAt(0)}</AvatarFallback>
                         </Avatar>
@@ -623,7 +663,7 @@ const Tasks = () => {
                     </div>
                   );
                 })}
-                <Button variant="ghost" size="sm" className="w-full mt-2">
+                <Button variant="ghost" size="sm" className="w-full mt-2" onClick={() => handleViewAll('Team Details')}>
                   <Users className="h-4 w-4 mr-2" /> View Team Details
                 </Button>
               </div>

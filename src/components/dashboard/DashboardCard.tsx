@@ -29,7 +29,7 @@ export const DashboardCard = ({
 }: DashboardCardProps) => {
   if (loading) {
     return (
-      <Card className={cn("overflow-hidden", className)}>
+      <Card className={cn("overflow-hidden w-full", className)}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <div>
             <Skeleton className="h-6 w-24" />
@@ -47,7 +47,7 @@ export const DashboardCard = ({
   }
 
   return (
-    <Card className={cn("overflow-hidden", className)}>
+    <Card className={cn("overflow-hidden w-full", className)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
           <CardTitle className="text-lg font-semibold">{title}</CardTitle>

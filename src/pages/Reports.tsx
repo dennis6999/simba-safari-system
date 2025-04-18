@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/layout/PageTemplate';
 import { 
@@ -15,8 +14,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/hooks/use-toast';
 
 const Reports = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [reportTypeFilter, setReportTypeFilter] = useState('all');
   const [dateRangeFilter, setDateRangeFilter] = useState('month');
@@ -25,218 +26,228 @@ const Reports = () => {
   // Sample report data
   const reports = [
     {
-      id: 'RPT-1001',
-      title: 'Monthly Animal Health Summary',
-      description: 'Comprehensive report on animal health metrics, treatments, and trends for April 2025.',
-      date: '2025-04-15',
+      id: 'RPT-2025-001',
+      title: 'Monthly Health Report',
+      description: 'Summary of animal health metrics for March 2025',
       type: 'health',
-      status: 'published',
-      author: 'Dr. Jane Wanjiku',
-      views: 156,
-      downloads: 42,
-      timeframe: 'monthly'
+      date: '2025-04-01',
+      author: 'Dr. Emily Carter',
+      views: 125,
+      downloads: 32,
+      status: 'published'
     },
     {
-      id: 'RPT-1002',
-      title: 'Q1 2025 Conservation Achievement Report',
-      description: 'Quarterly analysis of conservation efforts, successes, challenges, and KPI tracking.',
-      date: '2025-04-10',
+      id: 'RPT-2025-002',
+      title: 'Conservation Status Report',
+      description: 'Detailed analysis of conservation efforts in Q1 2025',
       type: 'conservation',
-      status: 'published',
-      author: 'Sarah Kimani',
-      views: 230,
-      downloads: 65,
-      timeframe: 'quarterly'
-    },
-    {
-      id: 'RPT-1003',
-      title: 'Visitor Demographics Analysis',
-      description: 'Detailed breakdown of visitor demographics, engagement, and satisfaction metrics.',
-      date: '2025-04-08',
-      type: 'visitors',
-      status: 'published',
-      author: 'Eunice Akinyi',
-      views: 178,
-      downloads: 37,
-      timeframe: 'monthly'
-    },
-    {
-      id: 'RPT-1004',
-      title: 'Wildlife Population Census',
-      description: 'Comprehensive census of wildlife populations, migration patterns, and habitat utilization.',
       date: '2025-04-05',
-      type: 'wildlife',
-      status: 'published',
-      author: 'Grace Muthoni',
-      views: 312,
-      downloads: 98,
-      timeframe: 'quarterly'
+      author: 'Dr. James Wilson',
+      views: 98,
+      downloads: 26,
+      status: 'draft'
     },
     {
-      id: 'RPT-1005',
-      title: 'Security Incidents Monthly Report',
-      description: 'Analysis of security events, response times, and threat assessment for April 2025.',
-      date: '2025-04-15',
-      type: 'security',
-      status: 'draft',
-      author: 'David Ochieng',
-      views: 0,
-      downloads: 0,
-      timeframe: 'monthly'
-    },
-    {
-      id: 'RPT-1006',
-      title: 'Financial Performance Analysis',
-      description: 'Monthly financial performance metrics, revenue streams, and budget tracking.',
-      date: '2025-04-14',
-      type: 'finance',
-      status: 'published',
-      author: 'James Kamau',
-      views: 45,
-      downloads: 12,
-      timeframe: 'monthly'
-    },
-    {
-      id: 'RPT-1007',
-      title: 'Educational Program Impact Assessment',
-      description: 'Evaluation of educational program outcomes, reach, and effectiveness.',
-      date: '2025-04-12',
-      type: 'education',
-      status: 'published',
-      author: 'Grace Muthoni',
-      views: 87,
-      downloads: 29,
-      timeframe: 'quarterly'
-    },
-    {
-      id: 'RPT-1008',
-      title: 'Rhino Conservation Status Update',
-      description: 'Focused report on rhino population health, growth, and conservation challenges.',
-      date: '2025-04-07',
-      type: 'wildlife',
-      status: 'published',
-      author: 'Sarah Kimani',
-      views: 225,
-      downloads: 76,
-      timeframe: 'monthly'
-    },
-    {
-      id: 'RPT-1009',
-      title: 'Staff Performance Analytics',
-      description: 'Assessment of staff performance metrics, training completion, and skill development.',
-      date: '2025-04-15',
-      type: 'staff',
-      status: 'draft',
-      author: 'Paul Kiprono',
-      views: 0,
-      downloads: 0,
-      timeframe: 'quarterly'
-    },
-    {
-      id: 'RPT-1010',
-      title: 'Infrastructure Maintenance Status',
-      description: 'Overview of infrastructure condition, maintenance activities, and future requirements.',
+      id: 'RPT-2025-003',
+      title: 'Visitor Analytics - March 2025',
+      description: 'Report on visitor demographics and engagement for March',
+      type: 'visitors',
       date: '2025-04-10',
+      author: 'Sarah Johnson',
+      views: 187,
+      downloads: 54,
+      status: 'published'
+    },
+    {
+      id: 'RPT-2025-004',
+      title: 'Wildlife Population Report',
+      description: 'Analysis of wildlife population trends in Sector 7',
+      type: 'wildlife',
+      date: '2025-04-15',
+      author: 'Ranger David Miller',
+      views: 76,
+      downloads: 19,
+      status: 'published'
+    },
+    {
+      id: 'RPT-2025-005',
+      title: 'Security Incident Log - March 2025',
+      description: 'Summary of security incidents and response actions',
+      type: 'security',
+      date: '2025-04-20',
+      author: 'Officer Michael Brown',
+      views: 63,
+      downloads: 12,
+      status: 'published'
+    },
+    {
+      id: 'RPT-2025-006',
+      title: 'Financial Performance - Q1 2025',
+      description: 'Overview of financial performance and budget utilization',
+      type: 'finance',
+      date: '2025-04-25',
+      author: 'Accountant Lisa Green',
+      views: 112,
+      downloads: 29,
+      status: 'published'
+    },
+    {
+      id: 'RPT-2025-007',
+      title: 'Education Program Report',
+      description: 'Evaluation of education program effectiveness',
+      type: 'education',
+      date: '2025-04-30',
+      author: 'Educator John Taylor',
+      views: 89,
+      downloads: 21,
+      status: 'published'
+    },
+    {
+      id: 'RPT-2025-008',
+      title: 'Staff Training Report',
+      description: 'Summary of staff training activities and outcomes',
+      type: 'staff',
+      date: '2025-05-05',
+      author: 'HR Manager Susan White',
+      views: 54,
+      downloads: 15,
+      status: 'published'
+    },
+    {
+      id: 'RPT-2025-009',
+      title: 'Infrastructure Maintenance Report',
+      description: 'Report on infrastructure maintenance and repairs',
       type: 'infrastructure',
-      status: 'published',
-      author: 'Alex Kirui',
-      views: 65,
+      date: '2025-05-10',
+      author: 'Engineer Robert Clark',
+      views: 78,
       downloads: 18,
-      timeframe: 'monthly'
+      status: 'published'
     }
   ];
 
-  // Sample analytics data for charts
-  const animalHealthData = {
-    animals: ['Lions', 'Elephants', 'Rhinos', 'Giraffes', 'Zebras', 'Leopards'],
-    metrics: [
-      { name: 'Health Index', values: [92, 88, 94, 90, 95, 87] },
-      { name: 'Treatment Success Rate', values: [95, 92, 90, 94, 96, 93] }
-    ]
+  // Button action handlers
+  const handleFilterClick = () => {
+    toast({
+      title: "Advanced Filters",
+      description: "Advanced filter options would appear here",
+    });
   };
 
-  const visitorData = {
-    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    metrics: [
-      { name: 'Local Visitors', values: [1200, 1350, 1400, 1450, 1600, 1800, 2000, 2100, 1900, 1700, 1500, 1300] },
-      { name: 'International Visitors', values: [850, 900, 950, 1100, 1250, 1500, 1650, 1700, 1450, 1300, 1100, 950] }
-    ]
+  const handleGenerateReport = () => {
+    toast({
+      title: "Generate Report",
+      description: "Opening report generation wizard",
+    });
   };
 
-  const conservationStats = {
-    categories: ['Habitat Restoration', 'Anti-Poaching', 'Water Management', 'Wildlife Corridors', 'Community Engagement'],
-    progress: [75, 88, 65, 70, 82]
+  const handleRefresh = () => {
+    toast({
+      title: "Refreshing Data",
+      description: "Refreshing report data from sources",
+    });
+  };
+
+  const handleViewOptions = (option: string) => {
+    toast({
+      title: `View Option: ${option}`,
+      description: `Switching to ${option} view`,
+    });
+  };
+
+  const handleReportAction = (action: string, reportId: string) => {
+    toast({
+      title: `Report Action: ${action}`,
+      description: `Action '${action}' performed on report ${reportId}`,
+    });
+  };
+
+  const handlePagination = (direction: 'prev' | 'next') => {
+    toast({
+      title: `Pagination: ${direction === 'prev' ? 'Previous' : 'Next'} Page`,
+      description: `Navigating to ${direction === 'prev' ? 'previous' : 'next'} page of results`,
+    });
+  };
+
+  const handleUseTemplate = (template: string) => {
+    toast({
+      title: "Using Template",
+      description: `Creating new report with template: ${template}`,
+    });
+  };
+
+  const handleCreateTemplate = () => {
+    toast({
+      title: "Create Template",
+      description: "Opening template creation form",
+    });
+  };
+
+  const handleViewAll = (section: string) => {
+    toast({
+      title: `View All ${section}`,
+      description: `Navigating to all ${section}`,
+    });
+  };
+
+  const handleViewCategoryTrends = () => {
+    toast({
+      title: "Category Trends",
+      description: "Viewing detailed category trends analysis",
+    });
   };
 
   // Filter reports based on type, date range and search query
   const filteredReports = reports.filter(report => {
-    // Filter by report type
     const matchesType = reportTypeFilter === 'all' || report.type === reportTypeFilter;
-    
-    // Filter by date range (based on the timeframe property for this example)
-    const matchesDateRange = dateRangeFilter === 'all' || report.timeframe === dateRangeFilter;
-    
-    // Filter by search query
-    const matchesSearch = searchQuery === '' || 
-                          report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          report.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          report.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
+    const matchesDateRange = dateRangeFilter === 'all' || dateRangeFilter === 'monthly'; // Simplified date range filter
+    const matchesSearch = searchQuery === '' ||
+      report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      report.description.toLowerCase().includes(searchQuery.toLowerCase());
+
     return matchesType && matchesDateRange && matchesSearch;
   });
   
   const getReportTypeBadge = (type: string) => {
-    const typeMap: {[key: string]: {icon: React.ReactNode, color: string}} = {
-      'health': { icon: <LineChart className="h-3 w-3" />, color: 'bg-blue-100 text-blue-800' },
-      'conservation': { icon: <AreaChart className="h-3 w-3" />, color: 'bg-green-100 text-green-800' },
-      'visitors': { icon: <BarChart className="h-3 w-3" />, color: 'bg-purple-100 text-purple-800' },
-      'wildlife': { icon: <PieChart className="h-3 w-3" />, color: 'bg-amber-100 text-amber-800' },
-      'security': { icon: <LineChart className="h-3 w-3" />, color: 'bg-red-100 text-red-800' },
-      'finance': { icon: <BarChart className="h-3 w-3" />, color: 'bg-emerald-100 text-emerald-800' },
-      'education': { icon: <PieChart className="h-3 w-3" />, color: 'bg-indigo-100 text-indigo-800' },
-      'staff': { icon: <BarChart className="h-3 w-3" />, color: 'bg-orange-100 text-orange-800' },
-      'infrastructure': { icon: <LineChart className="h-3 w-3" />, color: 'bg-gray-100 text-gray-800' }
+    const typeMap: {[key: string]: {label: string, color: string}} = {
+      'health': { label: 'Health', color: 'bg-red-100 text-red-800' },
+      'conservation': { label: 'Conservation', color: 'bg-green-100 text-green-800' },
+      'visitors': { label: 'Visitors', color: 'bg-blue-100 text-blue-800' },
+      'wildlife': { label: 'Wildlife', color: 'bg-amber-100 text-amber-800' },
+      'security': { label: 'Security', color: 'bg-orange-100 text-orange-800' },
+      'finance': { label: 'Finance', color: 'bg-purple-100 text-purple-800' },
+      'education': { label: 'Education', color: 'bg-teal-100 text-teal-800' },
+      'staff': { label: 'Staff', color: 'bg-lime-100 text-lime-800' },
+      'infrastructure': { label: 'Infrastructure', color: 'bg-sky-100 text-sky-800' }
     };
-    
-    const typeInfo = typeMap[type] || { icon: <LineChart className="h-3 w-3" />, color: 'bg-gray-100 text-gray-800' };
-    
+
+    const typeInfo = typeMap[type] || { label: type, color: 'bg-gray-100 text-gray-800' };
+
     return (
-      <Badge variant="secondary" className={`flex items-center gap-1 ${typeInfo.color}`}>
-        {typeInfo.icon} {type.charAt(0).toUpperCase() + type.slice(1)}
+      <Badge variant="secondary" className={typeInfo.color}>
+        {typeInfo.label}
       </Badge>
     );
   };
-  
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'published':
         return <Badge className="bg-green-500 hover:bg-green-600">Published</Badge>;
       case 'draft':
-        return <Badge variant="outline" className="text-amber-500 border-amber-500">Draft</Badge>;
+        return <Badge variant="outline">Draft</Badge>;
       case 'archived':
-        return <Badge variant="secondary" className="bg-gray-100 text-gray-800">Archived</Badge>;
+        return <Badge variant="destructive">Archived</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-  
-  // Sample chart placeholder components
-  const ChartPlaceholder = ({ type, title, subtitle }: { type: 'bar' | 'line' | 'pie' | 'area', title: string, subtitle: string }) => {
-    return (
-      <div className="border rounded-md p-4 h-72 flex flex-col">
-        <div className="mb-4">
-          <h3 className="font-medium">{title}</h3>
-          <p className="text-sm text-muted-foreground">{subtitle}</p>
-        </div>
-        <div className="flex-grow flex items-center justify-center bg-muted/20 rounded-md">
-          {type === 'bar' && <BarChart2 className="h-12 w-12 text-muted-foreground" />}
-          {type === 'line' && <LineChart className="h-12 w-12 text-muted-foreground" />}
-          {type === 'pie' && <PieChart className="h-12 w-12 text-muted-foreground" />}
-          {type === 'area' && <AreaChart className="h-12 w-12 text-muted-foreground" />}
-        </div>
-      </div>
-    );
-  };
+
+  const ChartPlaceholder = () => (
+    <div className="flex items-center justify-center h-48 rounded-md bg-muted">
+      <BarChart2 className="h-10 w-10 text-muted-foreground" />
+    </div>
+  );
   
   return (
     <PageTemplate 
@@ -258,27 +269,29 @@ const Reports = () => {
               />
             </div>
             <div className="grid grid-cols-2 sm:flex gap-2">
-              <Select 
-                value={reportTypeFilter} 
-                onValueChange={setReportTypeFilter}
-              >
-                <SelectTrigger className="w-full sm:w-40">
-                  <SelectValue placeholder="Report Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="health">Health</SelectItem>
-                  <SelectItem value="conservation">Conservation</SelectItem>
-                  <SelectItem value="visitors">Visitors</SelectItem>
-                  <SelectItem value="wildlife">Wildlife</SelectItem>
-                  <SelectItem value="security">Security</SelectItem>
-                  <SelectItem value="finance">Finance</SelectItem>
-                  <SelectItem value="education">Education</SelectItem>
-                  <SelectItem value="staff">Staff</SelectItem>
-                  <SelectItem value="infrastructure">Infrastructure</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button variant="outline" className="w-full sm:w-auto">
+              <div className="w-full">
+                <Select 
+                  value={reportTypeFilter} 
+                  onValueChange={setReportTypeFilter}
+                >
+                  <SelectTrigger className="w-full sm:w-40">
+                    <SelectValue placeholder="Report Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="health">Health</SelectItem>
+                    <SelectItem value="conservation">Conservation</SelectItem>
+                    <SelectItem value="visitors">Visitors</SelectItem>
+                    <SelectItem value="wildlife">Wildlife</SelectItem>
+                    <SelectItem value="security">Security</SelectItem>
+                    <SelectItem value="finance">Finance</SelectItem>
+                    <SelectItem value="education">Education</SelectItem>
+                    <SelectItem value="staff">Staff</SelectItem>
+                    <SelectItem value="infrastructure">Infrastructure</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button variant="outline" className="w-full sm:w-auto" onClick={handleFilterClick}>
                 <Filter className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Filter</span>
               </Button>
@@ -300,7 +313,7 @@ const Reports = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto" onClick={handleGenerateReport}>
               <FilePlus className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Generate Report</span>
             </Button>
@@ -309,7 +322,7 @@ const Reports = () => {
 
         {/* Reports Tabs and Content */}
         <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4 w-full sm:w-auto overflow-x-auto">
+          <TabsList className="mb-4 w-full overflow-x-auto flex whitespace-nowrap">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Layers className="h-4 w-4" /> Overview
             </TabsTrigger>
@@ -324,223 +337,104 @@ const Reports = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Reports Generated</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{reports.length}</div>
-                  <p className="text-xs text-muted-foreground">
-                    <span className="text-green-500">+12%</span> from last month
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {reports.reduce((sum, report) => sum + report.views, 0).toLocaleString()}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    <span className="text-green-500">+23%</span> from last month
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Data Sources</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">24</div>
-                  <p className="text-xs text-muted-foreground">
-                    Connected and operational
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Data Freshness</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">98.2%</div>
-                  <p className="text-xs text-muted-foreground">
-                    Data updated within 24 hours
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle>Recent Reports</CardTitle>
-                  <CardDescription>Latest published reports and analytics</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="rounded-md border overflow-hidden">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Report Title</TableHead>
-                          <TableHead className="hidden md:table-cell">Type</TableHead>
-                          <TableHead className="hidden md:table-cell">Date</TableHead>
-                          <TableHead className="hidden lg:table-cell">Author</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {reports
-                          .filter(report => report.status === 'published')
-                          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                          .slice(0, 5)
-                          .map((report) => (
-                            <TableRow key={report.id} className="cursor-pointer hover:bg-muted/50">
-                              <TableCell>
-                                <div className="font-medium">{report.title}</div>
-                                <div className="text-xs text-muted-foreground">{report.id}</div>
-                              </TableCell>
-                              <TableCell className="hidden md:table-cell">
-                                {getReportTypeBadge(report.type)}
-                              </TableCell>
-                              <TableCell className="hidden md:table-cell">
-                                {new Date(report.date).toLocaleDateString()}
-                              </TableCell>
-                              <TableCell className="hidden lg:table-cell">
-                                {report.author}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="h-8 w-8 p-0">
-                                      <span className="sr-only">Open menu</span>
-                                      <ChevronDown className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
-                                      <FileText className="mr-2 h-4 w-4" /> View Report
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <Download className="mr-2 h-4 w-4" /> Download
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <Printer className="mr-2 h-4 w-4" /> Print
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                  <div className="mt-4 flex justify-center">
-                    <Button variant="ghost">View All Reports</Button>
-                  </div>
-                </CardContent>
-              </Card>
-              
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Report Categories</CardTitle>
-                  <CardDescription>Distribution by report type</CardDescription>
+                  <CardTitle>Report Summary</CardTitle>
+                  <CardDescription>Overview of report generation</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {['wildlife', 'health', 'conservation', 'visitors', 'security', 'finance'].map(type => {
-                      const count = reports.filter(report => report.type === type).length;
-                      const percentage = Math.round((count / reports.length) * 100);
-                      
-                      return (
-                        <div key={type} className="space-y-1">
-                          <div className="flex justify-between text-sm">
-                            <div className="flex items-center">
-                              {getReportTypeBadge(type)}
-                            </div>
-                            <span>{percentage}%</span>
-                          </div>
-                          <Progress value={percentage} className="h-2" />
-                        </div>
-                      );
-                    })}
-                    
-                    <div className="pt-4">
-                      <Button variant="outline" className="w-full">
-                        <ArrowDownUp className="mr-2 h-4 w-4" /> View Category Trends
-                      </Button>
+                    <div className="flex justify-between">
+                      <span>Total Reports Generated</span>
+                      <span>{reports.length}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Average Views per Report</span>
+                      <span>{reports.reduce((acc, report) => acc + report.views, 0) / reports.length}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Total Downloads</span>
+                      <span>{reports.reduce((acc, report) => acc + report.downloads, 0)}</span>
                     </div>
                   </div>
                 </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full" onClick={() => handleViewAll('Reports')}>
+                    View All Reports
+                  </Button>
+                </CardFooter>
               </Card>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
               <Card>
                 <CardHeader>
-                  <CardTitle>Reports by Status</CardTitle>
-                  <CardDescription>Current report status breakdown</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center">
-                  <div className="h-40 w-40 relative mb-6 flex items-center justify-center bg-muted/20 rounded-full">
-                    <PieChart className="h-20 w-20 text-muted-foreground" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 w-full">
-                    <div className="flex flex-col items-center p-2 border rounded-md">
-                      <div className="text-2xl font-bold text-green-500">{reports.filter(r => r.status === 'published').length}</div>
-                      <div className="text-sm">Published</div>
-                    </div>
-                    <div className="flex flex-col items-center p-2 border rounded-md">
-                      <div className="text-2xl font-bold text-amber-500">{reports.filter(r => r.status === 'draft').length}</div>
-                      <div className="text-sm">Draft</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Report Engagement</CardTitle>
-                  <CardDescription>Views and downloads per report type</CardDescription>
+                  <CardTitle>Report Types</CardTitle>
+                  <CardDescription>Distribution of report types</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-6">
-                    {['wildlife', 'health', 'conservation'].map(type => {
-                      const typeReports = reports.filter(report => report.type === type);
-                      const totalViews = typeReports.reduce((sum, report) => sum + report.views, 0);
-                      const totalDownloads = typeReports.reduce((sum, report) => sum + report.downloads, 0);
-                      
-                      return (
-                        <div key={type} className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              {getReportTypeBadge(type)}
-                              <span className="font-medium text-sm">Reports</span>
-                            </div>
-                            <span className="text-sm text-muted-foreground">{typeReports.length} reports</span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="flex justify-between items-center p-2 bg-blue-50 rounded-md">
-                              <span className="text-xs text-muted-foreground">Views</span>
-                              <span className="font-bold">{totalViews}</span>
-                            </div>
-                            <div className="flex justify-between items-center p-2 bg-green-50 rounded-md">
-                              <span className="text-xs text-muted-foreground">Downloads</span>
-                              <span className="font-bold">{totalDownloads}</span>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <div className="space-y-2">
+                    {['health', 'conservation', 'visitors', 'security', 'finance'].map((type) => (
+                      <div key={type} className="flex justify-between">
+                        <span>{type}</span>
+                        <span>{reports.filter(report => report.type === type).length}</span>
+                      </div>
+                    ))}
                   </div>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full" onClick={handleViewCategoryTrends}>
+                    View Category Trends
+                  </Button>
+                </CardFooter>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Activity</CardTitle>
+                  <CardDescription>Latest report generation activity</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {reports.slice(0, 3).map((report) => (
+                      <div key={report.id} className="flex justify-between">
+                        <span>{report.title}</span>
+                        <span>{new Date(report.date).toLocaleDateString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full" onClick={() => handleViewAll('Recent Activity')}>
+                    View All Recent Activity
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Report Views</CardTitle>
+                  <CardDescription>Report views over time</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Report Downloads</CardTitle>
+                  <CardDescription>Report downloads over time</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="reports" className="space-y-6">
             <Card>
               <CardHeader>
@@ -550,7 +444,7 @@ const Reports = () => {
                     <CardDescription>Browse all generated reports</CardDescription>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="hidden sm:flex">
+                    <Button variant="outline" size="sm" className="hidden sm:flex" onClick={handleRefresh}>
                       <RefreshCw className="h-4 w-4 mr-2" /> Refresh
                     </Button>
                     <DropdownMenu>
@@ -560,17 +454,17 @@ const Reports = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewOptions('List View')}>
                           <List className="mr-2 h-4 w-4" /> List View
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewOptions('Grid View')}>
                           <Layers className="mr-2 h-4 w-4" /> Grid View
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewOptions('Group by Author')}>
                           <User className="mr-2 h-4 w-4" /> Group by Author
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewOptions('Group by Date')}>
                           <Calendar className="mr-2 h-4 w-4" /> Group by Date
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -579,7 +473,7 @@ const Reports = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="rounded-md border overflow-hidden">
+                <div className="rounded-md border overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -636,17 +530,17 @@ const Reports = () => {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                  <DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleReportAction('view', report.id)}>
                                     <FileText className="mr-2 h-4 w-4" /> View Report
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleReportAction('download', report.id)}>
                                     <Download className="mr-2 h-4 w-4" /> Download
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleReportAction('print', report.id)}>
                                     <Printer className="mr-2 h-4 w-4" /> Print
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
-                                  <DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleReportAction('regenerate', report.id)}>
                                     <RefreshCw className="mr-2 h-4 w-4" /> Regenerate
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -670,8 +564,8 @@ const Reports = () => {
                   Showing {filteredReports.length} of {reports.length} reports
                 </div>
                 <div className="flex gap-1">
-                  <Button variant="outline" size="sm" disabled>Previous</Button>
-                  <Button variant="outline" size="sm" disabled>Next</Button>
+                  <Button variant="outline" size="sm" disabled onClick={() => handlePagination('prev')}>Previous</Button>
+                  <Button variant="outline" size="sm" disabled onClick={() => handlePagination('next')}>Next</Button>
                 </div>
               </CardFooter>
             </Card>
@@ -695,10 +589,10 @@ const Reports = () => {
                           <FileText className="h-4 w-4 text-primary" />
                           <span className="text-sm">{template.name}</span>
                         </div>
-                        <Button variant="ghost" size="sm">Use</Button>
+                        <Button variant="ghost" size="sm" onClick={() => handleUseTemplate(template.name)}>Use</Button>
                       </div>
                     ))}
-                    <Button variant="outline" className="w-full mt-2">
+                    <Button variant="outline" className="w-full mt-2" onClick={handleCreateTemplate}>
                       <Plus className="mr-2 h-4 w-4" /> Create Template
                     </Button>
                   </div>
@@ -718,16 +612,33 @@ const Reports = () => {
                     ].map((scheduled, idx) => (
                       <div key={idx} className="flex justify-between items-center p-2 border rounded-md">
                         <div>
-                          <div className="font-medium text-sm">{scheduled.name}</div>
-                          <div className="text-xs text-muted-foreground">{scheduled.frequency}</div>
+                          <div className="text-sm font-medium">{scheduled.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {scheduled.frequency} · Next: {new Date(scheduled.nextRun).toLocaleDateString()}
+                          </div>
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          Next: {new Date(scheduled.nextRun).toLocaleDateString()}
-                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleReportAction('edit', idx.toString())}>
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleReportAction('run-now', idx.toString())}>
+                              Run Now
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleReportAction('disable', idx.toString())}>
+                              Disable
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     ))}
-                    <Button variant="outline" className="w-full mt-2">
-                      <Calendar className="mr-2 h-4 w-4" /> Schedule Report
+                    <Button variant="ghost" size="sm" className="w-full mt-2" onClick={() => handleViewAll('Scheduled Reports')}>
+                      View All Scheduled Reports
                     </Button>
                   </div>
                 </CardContent>
@@ -735,85 +646,141 @@ const Reports = () => {
               
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Export Options</CardTitle>
+                  <CardTitle className="text-sm font-medium">Report Actions</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {[
-                      { name: 'PDF Document', icon: <FileText className="h-4 w-4 text-primary" /> },
-                      { name: 'Excel Spreadsheet', icon: <FileText className="h-4 w-4 text-primary" /> },
-                      { name: 'CSV Data', icon: <FileText className="h-4 w-4 text-primary" /> },
-                      { name: 'PowerPoint Presentation', icon: <FileText className="h-4 w-4 text-primary" /> }
-                    ].map((format, idx) => (
-                      <div key={idx} className="flex justify-between items-center p-2 border rounded-md hover:bg-muted/30 transition-colors">
-                        <div className="flex items-center gap-2">
-                          {format.icon}
-                          <span className="text-sm">{format.name}</span>
-                        </div>
-                        <Button variant="ghost" size="sm">Export</Button>
-                      </div>
-                    ))}
+                    <Button variant="outline" className="w-full justify-start" onClick={handleGenerateReport}>
+                      <FilePlus className="mr-2 h-4 w-4" /> Generate New Report
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" onClick={() => handleViewOptions('Grid View')}>
+                      <Layers className="mr-2 h-4 w-4" /> Change View Mode
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" onClick={() => handleViewAll('Reports')}>
+                      <FileText className="mr-2 h-4 w-4" /> Browse All Reports
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" onClick={handleCreateTemplate}>
+                      <Plus className="mr-2 h-4 w-4" /> Create New Template
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" onClick={handleViewCategoryTrends}>
+                      <BarChart className="mr-2 h-4 w-4" /> View Category Trends
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
-
+          
           <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ChartPlaceholder 
-                type="bar" 
-                title="Animal Health Indicators"
-                subtitle="Tracking health metrics across species" 
-              />
-              <ChartPlaceholder 
-                type="line" 
-                title="Visitor Trends"
-                subtitle="Monthly visitor patterns and demographics" 
-              />
-              <ChartPlaceholder 
-                type="area" 
-                title="Conservation Progress"
-                subtitle="Key conservation metrics and achievements" 
-              />
-              <ChartPlaceholder 
-                type="pie" 
-                title="Report Distribution"
-                subtitle="Breakdown of report categories" 
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Report Views by Type</CardTitle>
+                  <CardDescription>Distribution of report views by type</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Report Downloads by Type</CardTitle>
+                  <CardDescription>Distribution of report downloads by type</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Report Status</CardTitle>
+                  <CardDescription>Distribution of report status</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Report Views Over Time</CardTitle>
+                  <CardDescription>Report views over time</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Report Downloads Over Time</CardTitle>
+                  <CardDescription>Report downloads over time</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 
           <TabsContent value="dashboards" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Custom Dashboards</CardTitle>
-                <CardDescription>Create and manage custom analytics dashboards</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[
-                    { name: 'Executive Overview', description: 'High-level metrics for management review', charts: 5 },
-                    { name: 'Conservation Dashboard', description: 'Detailed conservation program analytics', charts: 8 },
-                    { name: 'Visitor Insights', description: 'Visitor patterns and engagement metrics', charts: 6 }
-                  ].map((dashboard, idx) => (
-                    <div key={idx} className="border rounded-lg p-4 hover:bg-muted/30 transition-colors">
-                      <div className="font-medium">{dashboard.name}</div>
-                      <p className="text-sm text-muted-foreground mt-1">{dashboard.description}</p>
-                      <div className="flex justify-between items-center mt-4">
-                        <span className="text-xs text-muted-foreground">{dashboard.charts} charts</span>
-                        <Button variant="outline" size="sm">View</Button>
-                      </div>
-                    </div>
-                  ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Executive Summary</CardTitle>
+                  <CardDescription>Key metrics and trends</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
 
-                  <div className="border rounded-lg p-4 border-dashed flex flex-col items-center justify-center h-[140px]">
-                    <Plus className="h-8 w-8 text-muted-foreground mb-2" />
-                    <Button variant="outline">Create New Dashboard</Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Financial Performance</CardTitle>
+                  <CardDescription>Financial performance metrics</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Operational Efficiency</CardTitle>
+                  <CardDescription>Operational efficiency metrics</CardHeader>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Report Generation Trends</CardTitle>
+                  <CardDescription>Report generation trends</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Report Usage Trends</CardTitle>
+                  <CardDescription>Report usage trends</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartPlaceholder />
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
