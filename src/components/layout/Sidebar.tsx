@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -103,13 +102,6 @@ export const Sidebar = ({ collapsed, mobileOpen, toggleCollapsed, closeMobileSid
   const location = useLocation();
   const currentPath = location.pathname;
   const isMobile = useIsMobile();
-
-  // Close mobile sidebar when route changes
-  useEffect(() => {
-    if (isMobile && mobileOpen) {
-      closeMobileSidebar();
-    }
-  }, [currentPath, isMobile, mobileOpen, closeMobileSidebar]);
 
   const sidebarContent = (
     <>
@@ -285,7 +277,6 @@ export const Sidebar = ({ collapsed, mobileOpen, toggleCollapsed, closeMobileSid
     </>
   );
 
-  // For mobile devices, use a slide-out drawer
   if (isMobile) {
     return (
       <Sheet open={mobileOpen} onOpenChange={closeMobileSidebar}>
@@ -296,7 +287,6 @@ export const Sidebar = ({ collapsed, mobileOpen, toggleCollapsed, closeMobileSid
     );
   }
 
-  // For desktop devices, use the regular sidebar
   return (
     <aside
       className={cn(
