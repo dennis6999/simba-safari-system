@@ -1,415 +1,332 @@
-
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/layout/PageTemplate';
-import { ShieldAlert, Search, Filter, Plus, Check, AlertTriangle, X, MapPin, CalendarClock, User, ArrowUpDown, Clock, FileText, Shield, Wifi, Camera, Radio, MapPinned, Lock, Footprints, Download } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  Shield, Search, Filter, Bell, AlertTriangle, MapPin, Camera, 
+  Clock, User, ChevronDown, AlertCircle, CheckCircle2, 
+  FileText, Calendar, ArrowUpDown, Info
+} from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Security = () => {
-  const [activeTab, setActiveTab] = useState('incidents');
-  const [severityFilter, setSeverityFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState('overview');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // Sample security incidents data
+
+  // Sample security incident data
   const incidents = [
     {
-      id: 'INC-1001',
-      title: 'Perimeter Fence Breach Attempt',
-      description: 'Attempted breach of the eastern perimeter fence. No entry made. Evidence of wire cutting tools found.',
+      id: 'INC-2025-001',
+      title: 'Poaching Attempt in Sector 4',
+      description: 'Rangers reported signs of a potential poaching attempt targeting rhinos in Sector 4. Footprints and discarded equipment found near the watering hole.',
+      status: 'open',
+      priority: 'high',
+      location: 'Sector 4',
+      date: '2025-04-15',
+      time: '02:30',
+      reporter: {
+        id: 101,
+        name: 'Ranger David',
+        avatar: 'https://i.pravatar.cc/150?img=5'
+      },
+      category: 'poaching',
+      updates: 3,
+      attachments: 2
+    },
+    {
+      id: 'INC-2025-002',
+      title: 'Suspicious Vehicle Sighted Near North Gate',
+      description: 'A black SUV with unknown license plates was seen multiple times near the North Gate after hours. Driver could not be identified.',
+      status: 'investigating',
+      priority: 'medium',
+      location: 'North Gate',
+      date: '2025-04-14',
+      time: '22:15',
+      reporter: {
+        id: 102,
+        name: 'Guard James',
+        avatar: 'https://i.pravatar.cc/150?img=8'
+      },
+      category: 'trespassing',
+      updates: 5,
+      attachments: 1
+    },
+    {
+      id: 'INC-2025-003',
+      title: 'Fence Breach Detected on Western Perimeter',
+      description: 'Automated sensors detected a breach in the perimeter fence on the western side. Animal escape suspected.',
       status: 'resolved',
-      severity: 'medium',
-      reportedDate: '2025-04-14T10:30:00',
-      location: 'Eastern Perimeter',
-      reportedBy: {
-        name: 'David Ochieng',
-        avatar: 'https://i.pravatar.cc/150?img=68',
-        role: 'Senior Ranger'
-      },
-      assignedTo: {
-        name: 'John Mwangi',
-        avatar: 'https://i.pravatar.cc/150?img=53',
-        role: 'Security Lead'
-      },
-      responseTime: 12, // minutes
-      resolution: 'Increased patrols in the area. Fence repaired and reinforced.',
-      type: 'perimeter',
-      coordinates: { lat: -1.286389, lng: 36.817223 }
-    },
-    {
-      id: 'INC-1002',
-      title: 'Suspicious Vehicle Near Staff Entrance',
-      description: 'Unidentified vehicle observed parked near staff entrance for extended period. Vehicle left when security approached.',
-      status: 'resolved',
-      severity: 'low',
-      reportedDate: '2025-04-15T16:15:00',
-      location: 'Staff Entrance',
-      reportedBy: {
-        name: 'Alice Kamau',
-        avatar: 'https://i.pravatar.cc/150?img=32',
-        role: 'Gate Officer'
-      },
-      assignedTo: {
-        name: 'David Ochieng',
-        avatar: 'https://i.pravatar.cc/150?img=68',
-        role: 'Senior Ranger'
-      },
-      responseTime: 8, // minutes
-      resolution: 'License plate recorded. Vehicle identified as local resident lost.',
-      type: 'suspicious',
-      coordinates: { lat: -1.292389, lng: 36.821223 }
-    },
-    {
-      id: 'INC-1003',
-      title: 'Animal Monitoring Camera Vandalized',
-      description: 'Camera #47 in rhinoceros monitoring area found vandalized. Evidence suggests intentional damage.',
-      status: 'in-progress',
-      severity: 'high',
-      reportedDate: '2025-04-16T08:45:00',
-      location: 'Northern Reserve',
-      reportedBy: {
-        name: 'Sarah Kimani',
-        avatar: 'https://i.pravatar.cc/150?img=47',
-        role: 'Conservation Officer'
-      },
-      assignedTo: {
-        name: 'John Mwangi',
-        avatar: 'https://i.pravatar.cc/150?img=53',
-        role: 'Security Lead'
-      },
-      responseTime: 15, // minutes
-      type: 'equipment',
-      coordinates: { lat: -1.276389, lng: 36.807223 }
-    },
-    {
-      id: 'INC-1004',
-      title: 'Unauthorized Drone Activity',
-      description: 'Unauthorized drone spotted flying over the western section. Unable to locate operator.',
-      status: 'in-progress',
-      severity: 'medium',
-      reportedDate: '2025-04-16T14:20:00',
-      location: 'Western Section',
-      reportedBy: {
-        name: 'David Ochieng',
-        avatar: 'https://i.pravatar.cc/150?img=68',
-        role: 'Senior Ranger'
-      },
-      assignedTo: {
-        name: 'Paul Kiprop',
-        avatar: 'https://i.pravatar.cc/150?img=62',
-        role: 'Security Officer'
-      },
-      responseTime: 10, // minutes
-      type: 'airspace',
-      coordinates: { lat: -1.296389, lng: 36.797223 }
-    },
-    {
-      id: 'INC-1005',
-      title: 'Radio Communication Outage',
-      description: 'Radio communications down in southeastern sector for 35 minutes. Backup systems activated.',
-      status: 'resolved',
-      severity: 'high',
-      reportedDate: '2025-04-15T11:10:00',
-      location: 'Southeastern Sector',
-      reportedBy: {
-        name: 'John Mwangi',
-        avatar: 'https://i.pravatar.cc/150?img=53',
-        role: 'Security Lead'
-      },
-      assignedTo: {
-        name: 'James Kamau',
-        avatar: 'https://i.pravatar.cc/150?img=13',
-        role: 'IT Specialist'
-      },
-      responseTime: 5, // minutes
-      resolution: 'Faulty repeater replaced. All systems operational.',
-      type: 'equipment',
-      coordinates: { lat: -1.306389, lng: 36.827223 }
-    },
-    {
-      id: 'INC-1006',
-      title: 'Suspicious Tracks in Restricted Area',
-      description: 'Multiple human footprints found in restricted conservation area. No authorized personnel scheduled.',
-      status: 'in-progress',
-      severity: 'high',
-      reportedDate: '2025-04-17T06:30:00',
-      location: 'Eastern Reserve',
-      reportedBy: {
-        name: 'Michael Ngugi',
-        avatar: 'https://i.pravatar.cc/150?img=65',
-        role: 'Ranger'
-      },
-      assignedTo: {
-        name: 'John Mwangi',
-        avatar: 'https://i.pravatar.cc/150?img=53',
-        role: 'Security Lead'
-      },
-      responseTime: 18, // minutes
-      type: 'intrusion',
-      coordinates: { lat: -1.276389, lng: 36.837223 }
-    },
-    {
-      id: 'INC-1007',
-      title: 'Visitor Area Gate Malfunction',
-      description: 'Automated gate at main visitor entrance failed to secure properly after closing hours.',
-      status: 'resolved',
-      severity: 'medium',
-      reportedDate: '2025-04-14T19:05:00',
-      location: 'Main Visitor Entrance',
-      reportedBy: {
-        name: 'Eunice Akinyi',
-        avatar: 'https://i.pravatar.cc/150?img=24',
-        role: 'Visitor Operations'
-      },
-      assignedTo: {
-        name: 'Alex Kirui',
-        avatar: 'https://i.pravatar.cc/150?img=57',
-        role: 'Maintenance Technician'
-      },
-      responseTime: 22, // minutes
-      resolution: 'Manual override engaged. Mechanical issue fixed following morning.',
-      type: 'facilities',
-      coordinates: { lat: -1.288389, lng: 36.815223 }
-    },
-    {
-      id: 'INC-1008',
-      title: 'Poaching Equipment Found',
-      description: 'Snares and hunting equipment discovered hidden near the southern watering hole.',
-      status: 'in-progress',
-      severity: 'critical',
-      reportedDate: '2025-04-17T07:45:00',
-      location: 'Southern Watering Hole',
-      reportedBy: {
-        name: 'David Ochieng',
-        avatar: 'https://i.pravatar.cc/150?img=68',
-        role: 'Senior Ranger'
-      },
-      assignedTo: {
-        name: 'John Mwangi',
-        avatar: 'https://i.pravatar.cc/150?img=53',
-        role: 'Security Lead'
-      },
-      responseTime: 7, // minutes
-      type: 'poaching',
-      coordinates: { lat: -1.316389, lng: 36.817223 }
-    }
-  ];
-
-  // Sample patrol data
-  const patrols = [
-    {
-      id: 'PAT-1001',
-      name: 'Eastern Perimeter Morning Patrol',
-      schedule: 'Daily, 06:00-09:00',
-      status: 'active',
-      team: [
-        { name: 'David Ochieng', avatar: 'https://i.pravatar.cc/150?img=68' },
-        { name: 'Michael Ngugi', avatar: 'https://i.pravatar.cc/150?img=65' },
-        { name: 'Joseph Kiptoo', avatar: 'https://i.pravatar.cc/150?img=69' }
-      ],
-      vehicle: 'Vehicle #03 (4x4)',
-      equipment: ['Radios', 'GPS Trackers', 'Binoculars', 'First Aid Kit'],
-      lastReport: '2025-04-17T08:45:00',
-      route: 'Eastern Perimeter → Northeast Corner → Eastern Gate → Return'
-    },
-    {
-      id: 'PAT-1002',
-      name: 'Rhino Sanctuary Night Patrol',
-      schedule: 'Daily, 22:00-02:00',
-      status: 'active',
-      team: [
-        { name: 'John Mwangi', avatar: 'https://i.pravatar.cc/150?img=53' },
-        { name: 'Paul Kiprop', avatar: 'https://i.pravatar.cc/150?img=62' },
-        { name: 'George Kipruto', avatar: 'https://i.pravatar.cc/150?img=59' }
-      ],
-      vehicle: 'Vehicle #08 (Silent ATV)',
-      equipment: ['Night Vision', 'Thermal Cameras', 'Radios', 'GPS Trackers'],
-      lastReport: '2025-04-17T01:30:00',
-      route: 'Northern Gate → Rhino Sanctuary → Central Waterhole → Return'
-    },
-    {
-      id: 'PAT-1003',
-      name: 'Southern Border Afternoon Patrol',
-      schedule: 'Daily, 14:00-17:00',
-      status: 'active',
-      team: [
-        { name: 'Michael Ngugi', avatar: 'https://i.pravatar.cc/150?img=65' },
-        { name: 'Alice Njeri', avatar: 'https://i.pravatar.cc/150?img=32' }
-      ],
-      vehicle: 'Vehicle #05 (4x4)',
-      equipment: ['Radios', 'GPS Trackers', 'Drones', 'Water Testing Kit'],
-      lastReport: '2025-04-16T16:50:00',
-      route: 'Southern Gate → River Crossing → Southern Border → Return'
-    },
-    {
-      id: 'PAT-1004',
-      name: 'Western Zone Patrol',
-      schedule: 'Mon/Wed/Fri, 10:00-14:00',
-      status: 'scheduled',
-      team: [
-        { name: 'David Ochieng', avatar: 'https://i.pravatar.cc/150?img=68' },
-        { name: 'Christine Auma', avatar: 'https://i.pravatar.cc/150?img=45' }
-      ],
-      vehicle: 'Vehicle #04 (4x4)',
-      equipment: ['Radios', 'GPS Trackers', 'Camera Traps', 'Repair Kit'],
-      nextPatrol: '2025-04-19T10:00:00',
-      route: 'Western Gate → Camera Trap #12-18 → Western Boundary → Return'
-    }
-  ];
-
-  // Sample security equipment data
-  const equipment = [
-    {
-      id: 'EQ-CAM-123',
-      type: 'Camera',
-      model: 'Wildlife ProCam X2',
-      location: 'Eastern Perimeter',
-      status: 'operational',
-      lastMaintenance: '2025-03-15',
-      batteryStatus: 94,
-      notes: 'Solar powered with 4G connectivity'
-    },
-    {
-      id: 'EQ-CAM-124',
-      type: 'Camera',
-      model: 'Wildlife ProCam X2',
-      location: 'Rhino Sanctuary',
-      status: 'maintenance',
-      lastMaintenance: '2025-04-12',
-      batteryStatus: 65,
-      notes: 'Lens cleaning required'
-    },
-    {
-      id: 'EQ-DRN-056',
-      type: 'Drone',
-      model: 'Ranger Scout 450',
-      location: 'Central Command',
-      status: 'operational',
-      lastMaintenance: '2025-04-05',
-      batteryStatus: 100,
-      notes: 'Thermal imaging enabled'
-    },
-    {
-      id: 'EQ-SNS-089',
-      type: 'Motion Sensor',
-      model: 'Perimeter Guardian V3',
-      location: 'Northern Boundary',
-      status: 'operational',
-      lastMaintenance: '2025-03-28',
-      batteryStatus: 82,
-      notes: 'Connected to central alarm system'
-    },
-    {
-      id: 'EQ-RAD-034',
-      type: 'Radio Tower',
-      model: 'CommNet Pro Tower',
-      location: 'Central Hub',
-      status: 'operational',
-      lastMaintenance: '2025-02-22',
-      batteryStatus: 'N/A',
-      notes: 'Backup generators tested weekly'
-    },
-    {
-      id: 'EQ-CAM-125',
-      type: 'Camera',
-      model: 'NightWatch Infrared',
+      priority: 'low',
       location: 'Western Perimeter',
-      status: 'fault',
-      lastMaintenance: '2025-01-30',
-      batteryStatus: 0,
-      notes: 'Battery failure, replacement scheduled'
+      date: '2025-04-13',
+      time: '06:40',
+      reporter: {
+        id: 103,
+        name: 'Technician Sarah',
+        avatar: 'https://i.pravatar.cc/150?img=12'
+      },
+      category: 'infrastructure',
+      updates: 2,
+      attachments: 0
+    },
+    {
+      id: 'INC-2025-004',
+      title: 'Unusual Animal Behavior Reported in Sector 7',
+      description: 'Tourists reported unusual aggressive behavior from a pack of wild dogs in Sector 7. Possible rabies outbreak suspected.',
+      status: 'open',
+      priority: 'high',
+      location: 'Sector 7',
+      date: '2025-04-12',
+      time: '14:55',
+      reporter: {
+        id: 104,
+        name: 'Guide Peter',
+        avatar: 'https://i.pravatar.cc/150?img=15'
+      },
+      category: 'wildlife',
+      updates: 4,
+      attachments: 3
+    },
+    {
+      id: 'INC-2025-005',
+      title: 'Equipment Theft from Research Station',
+      description: 'Various pieces of research equipment, including cameras and GPS trackers, were stolen from the main research station.',
+      status: 'investigating',
+      priority: 'medium',
+      location: 'Research Station',
+      date: '2025-04-11',
+      time: '09:20',
+      reporter: {
+        id: 105,
+        name: 'Scientist John',
+        avatar: 'https://i.pravatar.cc/150?img=18'
+      },
+      category: 'theft',
+      updates: 1,
+      attachments: 1
+    },
+    {
+      id: 'INC-2025-006',
+      title: 'Drone Sighting Over Restricted Area',
+      description: 'A drone was spotted flying over a restricted breeding area. Operator unknown.',
+      status: 'open',
+      priority: 'medium',
+      location: 'Breeding Area',
+      date: '2025-04-10',
+      time: '17:40',
+      reporter: {
+        id: 101,
+        name: 'Ranger David',
+        avatar: 'https://i.pravatar.cc/150?img=5'
+      },
+      category: 'surveillance',
+      updates: 2,
+      attachments: 0
+    },
+    {
+      id: 'INC-2025-007',
+      title: 'Vandalism at Visitor Center',
+      description: 'Graffiti and minor damage reported at the main visitor center.',
+      status: 'resolved',
+      priority: 'low',
+      location: 'Visitor Center',
+      date: '2025-04-09',
+      time: '21:00',
+      reporter: {
+        id: 102,
+        name: 'Guard James',
+        avatar: 'https://i.pravatar.cc/150?img=8'
+      },
+      category: 'vandalism',
+      updates: 3,
+      attachments: 2
+    },
+    {
+      id: 'INC-2025-008',
+      title: 'Illegal Campfire Detected',
+      description: 'An illegal campfire was detected in a non-designated camping area. Fire extinguished, area secured.',
+      status: 'resolved',
+      priority: 'low',
+      location: 'Undesignated Area',
+      date: '2025-04-08',
+      time: '03:15',
+      reporter: {
+        id: 103,
+        name: 'Technician Sarah',
+        avatar: 'https://i.pravatar.cc/150?img=12'
+      },
+      category: 'fire',
+      updates: 1,
+      attachments: 0
+    },
+    {
+      id: 'INC-2025-009',
+      title: 'Stray Animal Found Near Housing',
+      description: 'A stray domestic dog was found wandering near staff housing. Animal taken to shelter.',
+      status: 'closed',
+      priority: 'low',
+      location: 'Staff Housing',
+      date: '2025-04-07',
+      time: '11:30',
+      reporter: {
+        id: 104,
+        name: 'Guide Peter',
+        avatar: 'https://i.pravatar.cc/150?img=15'
+      },
+      category: 'animal',
+      updates: 2,
+      attachments: 1
+    },
+    {
+      id: 'INC-2025-010',
+      title: 'Security Drill Conducted Successfully',
+      description: 'A scheduled security drill was conducted to test response times and coordination. All objectives met.',
+      status: 'closed',
+      priority: 'low',
+      location: 'Multiple Locations',
+      date: '2025-04-06',
+      time: '15:00',
+      reporter: {
+        id: 105,
+        name: 'Scientist John',
+        avatar: 'https://i.pravatar.cc/150?img=18'
+      },
+      category: 'training',
+      updates: 0,
+      attachments: 0
+    }
+  ];
+
+  // Sample security objectives data
+  const objectives = [
+    {
+      id: 'OBJ-2025-001',
+      title: 'Reduce Poaching Incidents',
+      description: 'Decrease the number of poaching incidents by 15% compared to the previous year.',
+      current: '85',
+      target: 100,
+      status: 'on-track'
+    },
+    {
+      id: 'OBJ-2025-002',
+      title: 'Improve Response Time to Incidents',
+      description: 'Decrease the average response time to security incidents by 20%.',
+      current: '75',
+      target: 100,
+      status: 'at-risk'
+    },
+    {
+      id: 'OBJ-2025-003',
+      title: 'Enhance Perimeter Security',
+      description: 'Upgrade perimeter security measures to cover 95% of the park boundaries.',
+      current: '90',
+      target: 100,
+      status: 'on-track'
+    },
+    {
+      id: 'OBJ-2025-004',
+      title: 'Increase Staff Training Hours',
+      description: 'Increase the total number of security staff training hours by 25%.',
+      current: '60',
+      target: 100,
+      status: 'off-track'
     }
   ];
 
   // Get unique locations for filter
   const locations = [...new Set(incidents.map(incident => incident.location))];
-  
-  // Filter incidents based on active tab, severity, location and search query
+
+  // Filter incidents based on active tab, status, location and search query
   const filteredIncidents = incidents.filter(incident => {
-    // Filter by severity
-    const matchesSeverity = severityFilter === 'all' || incident.severity === severityFilter;
-    
+    // Filter by tab (status)
+    const matchesTab = activeTab === 'all' || incident.status === activeTab;
+
+    // Filter by status
+    const matchesStatus = statusFilter === 'all' || incident.status === statusFilter;
+
     // Filter by location
     const matchesLocation = locationFilter === 'all' || incident.location === locationFilter;
-    
+
     // Filter by search query
-    const matchesSearch = searchQuery === '' || 
-                          incident.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          incident.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          incident.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return matchesSeverity && matchesLocation && matchesSearch;
+    const matchesSearch = searchQuery === '' ||
+      incident.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      incident.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      incident.id.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesTab && matchesStatus && matchesLocation && matchesSearch;
   });
-  
-  const getSeverityBadge = (severity: string) => {
-    switch (severity) {
-      case 'low':
-        return <Badge variant="outline" className="text-blue-500 border-blue-500">Low</Badge>;
-      case 'medium':
-        return <Badge className="bg-amber-500 hover:bg-amber-600">Medium</Badge>;
-      case 'high':
-        return <Badge className="bg-orange-500 hover:bg-orange-600">High</Badge>;
-      case 'critical':
-        return <Badge className="bg-red-500 hover:bg-red-600">Critical</Badge>;
-      default:
-        return <Badge variant="outline">{severity}</Badge>;
-    }
-  };
-  
+
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'in-progress':
-        return <Badge className="bg-amber-500 hover:bg-amber-600">In Progress</Badge>;
+      case 'open':
+        return <Badge variant="outline" className="text-red-500 border-red-500">Open</Badge>;
+      case 'investigating':
+        return <Badge className="bg-amber-500 hover:bg-amber-600">Investigating</Badge>;
       case 'resolved':
         return <Badge className="bg-green-500 hover:bg-green-600">Resolved</Badge>;
-      case 'operational':
-        return <Badge className="bg-green-500 hover:bg-green-600">Operational</Badge>;
-      case 'maintenance':
-        return <Badge variant="outline" className="text-amber-500 border-amber-500">Maintenance</Badge>;
-      case 'fault':
-        return <Badge className="bg-red-500 hover:bg-red-600">Fault</Badge>;
-      case 'active':
-        return <Badge className="bg-green-500 hover:bg-green-600">Active</Badge>;
-      case 'scheduled':
-        return <Badge variant="outline" className="text-blue-500 border-blue-500">Scheduled</Badge>;
+      case 'closed':
+        return <Badge variant="secondary">Closed</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-  
-  const getTypeBadge = (type: string) => {
-    const typeMap: {[key: string]: {icon: React.ReactNode, color: string}} = {
-      'perimeter': { icon: <Shield className="h-3 w-3" />, color: 'bg-amber-100 text-amber-800' },
-      'suspicious': { icon: <AlertTriangle className="h-3 w-3" />, color: 'bg-orange-100 text-orange-800' },
-      'equipment': { icon: <Camera className="h-3 w-3" />, color: 'bg-blue-100 text-blue-800' },
-      'airspace': { icon: <Wifi className="h-3 w-3" />, color: 'bg-purple-100 text-purple-800' },
-      'intrusion': { icon: <Footprints className="h-3 w-3" />, color: 'bg-red-100 text-red-800' },
-      'facilities': { icon: <Lock className="h-3 w-3" />, color: 'bg-green-100 text-green-800' },
-      'poaching': { icon: <AlertTriangle className="h-3 w-3" />, color: 'bg-red-100 text-red-800' }
+
+  const getPriorityBadge = (priority: string) => {
+    switch (priority) {
+      case 'high':
+        return <Badge variant="destructive">High</Badge>;
+      case 'medium':
+        return <Badge className="bg-amber-500 hover:bg-amber-600">Medium</Badge>;
+      case 'low':
+        return <Badge variant="secondary">Low</Badge>;
+      default:
+        return <Badge variant="outline">{priority}</Badge>;
+    }
+  };
+
+  const getCategoryBadge = (category: string) => {
+    const categoryMap: {[key: string]: {label: string, color: string}} = {
+      'poaching': { label: 'Poaching', color: 'bg-red-100 text-red-800' },
+      'trespassing': { label: 'Trespassing', color: 'bg-amber-100 text-amber-800' },
+      'infrastructure': { label: 'Infrastructure', color: 'bg-blue-100 text-blue-800' },
+      'wildlife': { label: 'Wildlife', color: 'bg-green-100 text-green-800' },
+      'theft': { label: 'Theft', color: 'bg-purple-100 text-purple-800' },
+      'surveillance': { label: 'Surveillance', color: 'bg-indigo-100 text-indigo-800' },
+      'vandalism': { label: 'Vandalism', color: 'bg-gray-100 text-gray-800' },
+      'fire': { label: 'Fire', color: 'bg-orange-100 text-orange-800' },
+      'animal': { label: 'Animal', color: 'bg-teal-100 text-teal-800' },
+      'training': { label: 'Training', color: 'bg-pink-100 text-pink-800' }
     };
-    
-    const typeInfo = typeMap[type] || { icon: <Info className="h-3 w-3" />, color: 'bg-gray-100 text-gray-800' };
-    
+
+    const categoryInfo = categoryMap[category] || { label: category, color: 'bg-gray-100 text-gray-800' };
+
     return (
-      <Badge variant="secondary" className={`flex items-center gap-1 ${typeInfo.color}`}>
-        {typeInfo.icon} {type.charAt(0).toUpperCase() + type.slice(1)}
+      <Badge variant="secondary" className={categoryInfo.color}>
+        {categoryInfo.label}
       </Badge>
     );
   };
-  
+
+  // Convert string values to numbers for comparisons
+  const calculateProgress = (current: number | string, target: number): number => {
+    const currentValue = typeof current === 'string' ? parseFloat(current) : current;
+    return Math.min(Math.round((currentValue / target) * 100), 100);
+  };
+
   return (
-    <PageTemplate 
-      title="Security Operations" 
-      description="Manage park security and anti-poaching operations"
-      icon={<ShieldAlert className="h-6 w-6" />}
+    <PageTemplate
+      title="Security Management"
+      description="Monitor and manage security incidents and objectives"
+      icon={<Shield className="h-6 w-6" />}
     >
       <div className="space-y-6">
         {/* Action Bar */}
@@ -417,27 +334,27 @@ const Security = () => {
           <div className="grid grid-cols-1 sm:flex gap-2 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-64">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search incidents..." 
+              <Input
+                placeholder="Search incidents..."
                 className="pl-8 w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <div className="grid grid-cols-2 sm:flex gap-2">
-              <Select 
-                value={severityFilter} 
-                onValueChange={setSeverityFilter}
+              <Select
+                value={statusFilter}
+                onValueChange={setStatusFilter}
               >
                 <SelectTrigger className="w-full sm:w-40">
-                  <SelectValue placeholder="Severity" />
+                  <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Severities</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="critical">Critical</SelectItem>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="open">Open</SelectItem>
+                  <SelectItem value="investigating">Investigating</SelectItem>
+                  <SelectItem value="resolved">Resolved</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline" className="w-full sm:w-auto">
@@ -447,8 +364,8 @@ const Security = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Select 
-              value={locationFilter} 
+            <Select
+              value={locationFilter}
               onValueChange={setLocationFilter}
               className="w-full sm:w-auto"
             >
@@ -458,52 +375,65 @@ const Security = () => {
               <SelectContent>
                 <SelectItem value="all">All Locations</SelectItem>
                 {locations.map(location => (
-                  <SelectItem key={location} value={location}>{location}</SelectItem>
+                  <SelectItem key={location} value={location}>
+                    {location}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Button className="w-full sm:w-auto">
-              <Plus className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Report Incident</span>
+              <AlertTriangle className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">New Incident</span>
             </Button>
           </div>
         </div>
 
         {/* Security Tabs and Content */}
-        <Tabs defaultValue="incidents" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-4 w-full sm:w-auto overflow-x-auto">
-            <TabsTrigger value="incidents" className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" /> Incidents
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" /> Overview
             </TabsTrigger>
-            <TabsTrigger value="patrols" className="flex items-center gap-2">
-              <Footprints className="h-4 w-4" /> Patrols
+            <TabsTrigger value="all" className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4" /> All Incidents <Badge variant="secondary" className="ml-1">{incidents.length}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="equipment" className="flex items-center gap-2">
-              <Camera className="h-4 w-4" /> Equipment
+            <TabsTrigger value="open" className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" /> Open <Badge variant="secondary" className="ml-1">{incidents.filter(i => i.status === 'open').length}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="map" className="flex items-center gap-2">
-              <MapPinned className="h-4 w-4" /> Security Map
+            <TabsTrigger value="investigating" className="flex items-center gap-2">
+              <Search className="h-4 w-4" /> Investigating <Badge variant="secondary" className="ml-1">{incidents.filter(i => i.status === 'investigating').length}</Badge>
+            </TabsTrigger>
+            <TabsTrigger value="resolved" className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4" /> Resolved <Badge variant="secondary" className="ml-1">{incidents.filter(i => i.status === 'resolved').length}</Badge>
+            </TabsTrigger>
+            <TabsTrigger value="closed" className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4" /> Closed <Badge variant="secondary" className="ml-1">{incidents.filter(i => i.status === 'closed').length}</Badge>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="incidents" className="space-y-4">
+          <TabsContent value={activeTab} className="space-y-4">
             <Card>
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-center">
                   <div>
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <ShieldAlert className="h-5 w-5" /> Security Incidents
+                      <Shield className="h-5 w-5" />
+                      {activeTab === 'overview' ? 'Security Overview' :
+                       activeTab === 'all' ? 'All Incidents' :
+                       activeTab === 'open' ? 'Open Incidents' :
+                       activeTab === 'investigating' ? 'Investigating Incidents' :
+                       activeTab === 'resolved' ? 'Resolved Incidents' : 'Closed Incidents'}
                     </CardTitle>
                     <CardDescription>
-                      Showing {filteredIncidents.length} of {incidents.length} reported incidents
+                      Showing {filteredIncidents.length} of {incidents.length} incidents
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" className="hidden sm:flex">
-                      <FileText className="h-4 w-4 mr-2" /> Generate Report
+                      <Calendar className="h-4 w-4 mr-2" /> Calendar View
                     </Button>
                     <Button variant="ghost" size="sm" className="hidden sm:flex">
-                      <Download className="h-4 w-4 mr-2" /> Export
+                      <ArrowUpDown className="h-4 w-4 mr-2" /> Sort
                     </Button>
                   </div>
                 </div>
@@ -517,10 +447,9 @@ const Security = () => {
                           <TableHead className="w-[100px]">ID</TableHead>
                           <TableHead>Incident</TableHead>
                           <TableHead className="hidden md:table-cell">Location</TableHead>
-                          <TableHead className="hidden lg:table-cell">Reported</TableHead>
-                          <TableHead className="hidden md:table-cell">Assigned To</TableHead>
-                          <TableHead>Severity</TableHead>
-                          <TableHead>Status</TableHead>
+                          <TableHead className="hidden lg:table-cell">Reporter</TableHead>
+                          <TableHead className="hidden sm:table-cell">Date/Time</TableHead>
+                          <TableHead>Priority</TableHead>
                           <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -532,70 +461,64 @@ const Security = () => {
                               <TableCell>
                                 <div className="font-medium">{incident.title}</div>
                                 <div className="text-xs text-muted-foreground hidden sm:block mt-1">
-                                  {incident.description.length > 50 
-                                    ? `${incident.description.substring(0, 50)}...` 
+                                  {incident.description.length > 50
+                                    ? `${incident.description.substring(0, 50)}...`
                                     : incident.description}
                                 </div>
-                                <div className="mt-1">
-                                  {getTypeBadge(incident.type)}
+                                <div className="mt-1 flex gap-1">
+                                  {getStatusBadge(incident.status)}
+                                  {getCategoryBadge(incident.category)}
                                 </div>
                               </TableCell>
-                              <TableCell className="hidden md:table-cell">
-                                <div className="flex items-center gap-1">
-                                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                                  <span>{incident.location}</span>
-                                </div>
-                              </TableCell>
+                              <TableCell className="hidden md:table-cell">{incident.location}</TableCell>
                               <TableCell className="hidden lg:table-cell">
-                                <div className="flex flex-col">
-                                  <span>{new Date(incident.reportedDate).toLocaleDateString()}</span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {new Date(incident.reportedDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    By: {incident.reportedBy.name}
-                                  </span>
-                                </div>
-                              </TableCell>
-                              <TableCell className="hidden md:table-cell">
                                 <div className="flex items-center gap-2">
                                   <Avatar className="h-8 w-8">
-                                    <AvatarImage src={incident.assignedTo.avatar} alt={incident.assignedTo.name} />
-                                    <AvatarFallback>{incident.assignedTo.name.charAt(0)}</AvatarFallback>
+                                    <AvatarImage src={incident.reporter.avatar} alt={incident.reporter.name} />
+                                    <AvatarFallback>{incident.reporter.name.charAt(0)}</AvatarFallback>
                                   </Avatar>
-                                  <div className="text-sm">{incident.assignedTo.name}</div>
+                                  <div>
+                                    <div className="text-sm font-medium">{incident.reporter.name}</div>
+                                  </div>
                                 </div>
                               </TableCell>
-                              <TableCell>{getSeverityBadge(incident.severity)}</TableCell>
-                              <TableCell>{getStatusBadge(incident.status)}</TableCell>
+                              <TableCell className="hidden sm:table-cell">
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                                  <span>{new Date(incident.date).toLocaleDateString()}</span>
+                                  <Clock className="h-4 w-4 text-muted-foreground ml-2" />
+                                  <span>{incident.time}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell>{getPriorityBadge(incident.priority)}</TableCell>
                               <TableCell className="text-right">
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="h-8 w-8 p-0">
                                       <span className="sr-only">Open menu</span>
-                                      <ArrowUpDown className="h-4 w-4" />
+                                      <ChevronDown className="h-4 w-4" />
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                     <DropdownMenuItem>
-                                      <User className="mr-2 h-4 w-4" /> Reassign
+                                      <FileText className="mr-2 h-4 w-4" /> View Details
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>
-                                      <MapPin className="mr-2 h-4 w-4" /> View Location
+                                      <MapPin className="mr-2 h-4 w-4" /> View on Map
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>
-                                      <Clock className="mr-2 h-4 w-4" /> View Timeline
+                                      <Camera className="mr-2 h-4 w-4" /> Add Media
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    {incident.status !== 'resolved' && (
+                                    {incident.status !== 'closed' && (
                                       <DropdownMenuItem>
-                                        <Check className="mr-2 h-4 w-4" /> Mark Resolved
+                                        <CheckCircle2 className="mr-2 h-4 w-4" /> Mark as Resolved
                                       </DropdownMenuItem>
                                     )}
                                     {incident.status === 'resolved' && (
                                       <DropdownMenuItem>
-                                        <X className="mr-2 h-4 w-4" /> Reopen
+                                        <AlertCircle className="mr-2 h-4 w-4" /> Reopen Incident
                                       </DropdownMenuItem>
                                     )}
                                   </DropdownMenuContent>
@@ -605,7 +528,7 @@ const Security = () => {
                           ))
                         ) : (
                           <TableRow>
-                            <TableCell colSpan={8} className="text-center py-6 text-muted-foreground">
+                            <TableCell colSpan={7} className="text-center py-6 text-muted-foreground">
                               No incidents found matching the current filters.
                             </TableCell>
                           </TableRow>
@@ -626,488 +549,175 @@ const Security = () => {
               </CardFooter>
             </Card>
           </TabsContent>
-          
-          <TabsContent value="patrols" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="lg:col-span-2">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Footprints className="h-5 w-5" /> Active Patrols
-                    </CardTitle>
-                    <CardDescription>
-                      Currently active and scheduled patrol teams
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6">
-                      {patrols.map((patrol) => (
-                        <div key={patrol.id} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-start mb-3">
-                            <div>
-                              <h3 className="font-medium">{patrol.name}</h3>
-                              <p className="text-sm text-muted-foreground">{patrol.id} • {patrol.schedule}</p>
-                            </div>
-                            <div>
-                              {getStatusBadge(patrol.status)}
-                            </div>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                              <h4 className="text-sm font-medium mb-2">Team Members</h4>
-                              <div className="flex -space-x-2">
-                                {patrol.team.map((member, idx) => (
-                                  <Avatar key={idx} className="h-8 w-8 border-2 border-background">
-                                    <AvatarImage src={member.avatar} alt={member.name} />
-                                    <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                                  </Avatar>
-                                ))}
-                                <div className="flex items-center justify-center h-8 w-8 rounded-full bg-muted text-muted-foreground text-xs">
-                                  {patrol.team.length}
-                                </div>
-                              </div>
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-medium mb-2">Equipment</h4>
-                              <div className="flex flex-wrap gap-1">
-                                {patrol.equipment.map((item, idx) => (
-                                  <Badge key={idx} variant="outline">{item}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex flex-col sm:flex-row justify-between text-sm border-t pt-3">
-                            <div className="flex items-center gap-1 mb-2 sm:mb-0">
-                              <MapPin className="h-4 w-4 text-muted-foreground" />
-                              <span>{patrol.route}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <CalendarClock className="h-4 w-4 text-muted-foreground" />
-                              <span>{patrol.lastReport 
-                                ? `Last Report: ${new Date(patrol.lastReport).toLocaleString()}` 
-                                : `Next Patrol: ${new Date(patrol.nextPatrol as string).toLocaleString()}`}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-3 flex gap-2 justify-end">
-                            <Button variant="outline" size="sm">View Details</Button>
-                            <Button size="sm">Contact Team</Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              <div>
-                <Card className="mb-4">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Patrol Coverage</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-col gap-2">
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Eastern Perimeter</span>
-                          <span>95%</span>
-                        </div>
-                        <Progress value={95} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Northern Perimeter</span>
-                          <span>87%</span>
-                        </div>
-                        <Progress value={87} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Western Perimeter</span>
-                          <span>82%</span>
-                        </div>
-                        <Progress value={82} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Southern Perimeter</span>
-                          <span>78%</span>
-                        </div>
-                        <Progress value={78} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Rhino Sanctuary</span>
-                          <span>100%</span>
-                        </div>
-                        <Progress value={100} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Central Areas</span>
-                          <span>65%</span>
-                        </div>
-                        <Progress value={65} className="h-2" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Quick Actions</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <Button className="w-full justify-start">
-                        <Plus className="mr-2 h-4 w-4" /> Schedule New Patrol
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start">
-                        <Radio className="mr-2 h-4 w-4" /> Check-in Request
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start">
-                        <Shield className="mr-2 h-4 w-4" /> Security Protocols
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start">
-                        <Clock className="mr-2 h-4 w-4" /> Patrol History
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start">
-                        <Camera className="mr-2 h-4 w-4" /> Deploy Camera Trap
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="equipment" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Equipment Status</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="mt-2 space-y-4">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-500" />
-                          <span>Operational</span>
-                        </div>
-                        <span>{equipment.filter(e => e.status === 'operational').length}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-amber-500" />
-                          <span>Maintenance</span>
-                        </div>
-                        <span>{equipment.filter(e => e.status === 'maintenance').length}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <X className="h-4 w-4 text-red-500" />
-                          <span>Fault</span>
-                        </div>
-                        <span>{equipment.filter(e => e.status === 'fault').length}</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Equipment Type</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="mt-2 space-y-4">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Camera className="h-4 w-4 text-blue-500" />
-                          <span>Cameras</span>
-                        </div>
-                        <span>{equipment.filter(e => e.type === 'Camera').length}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Wifi className="h-4 w-4 text-purple-500" />
-                          <span>Drones</span>
-                        </div>
-                        <span>{equipment.filter(e => e.type === 'Drone').length}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Radio className="h-4 w-4 text-green-500" />
-                          <span>Communication</span>
-                        </div>
-                        <span>{equipment.filter(e => e.type === 'Radio Tower').length}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <AlertTriangle className="h-4 w-4 text-amber-500" />
-                          <span>Sensors</span>
-                        </div>
-                        <span>{equipment.filter(e => e.type === 'Motion Sensor').length}</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Maintenance Schedule</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="mt-2 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CalendarClock className="h-4 w-4 text-blue-500" />
-                        <span>Today</span>
-                      </div>
-                      <span>0</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CalendarClock className="h-4 w-4 text-green-500" />
-                        <span>This Week</span>
-                      </div>
-                      <span>2</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CalendarClock className="h-4 w-4 text-amber-500" />
-                        <span>Overdue</span>
-                      </div>
-                      <span>1</span>
-                    </div>
-                    <div className="mt-4">
-                      <Button size="sm" className="w-full">View Schedule</Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Security Equipment Inventory</CardTitle>
-                <CardDescription>Status and location of security equipment</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>ID</TableHead>
-                          <TableHead>Type</TableHead>
-                          <TableHead>Model</TableHead>
-                          <TableHead className="hidden md:table-cell">Location</TableHead>
-                          <TableHead className="hidden lg:table-cell">Last Maintenance</TableHead>
-                          <TableHead>Battery</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {equipment.map((item) => (
-                          <TableRow key={item.id} className="cursor-pointer hover:bg-muted/50">
-                            <TableCell className="font-medium">{item.id}</TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                {item.type === 'Camera' ? <Camera className="h-4 w-4" /> :
-                                 item.type === 'Drone' ? <Wifi className="h-4 w-4" /> :
-                                 item.type === 'Motion Sensor' ? <AlertTriangle className="h-4 w-4" /> :
-                                 <Radio className="h-4 w-4" />}
-                                {item.type}
-                              </div>
-                            </TableCell>
-                            <TableCell>{item.model}</TableCell>
-                            <TableCell className="hidden md:table-cell">{item.location}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{new Date(item.lastMaintenance).toLocaleDateString()}</TableCell>
-                            <TableCell>
-                              {item.batteryStatus === 'N/A' ? (
-                                <span className="text-muted-foreground">N/A</span>
-                              ) : (
-                                <div className="w-full max-w-[60px]">
-                                  <Progress 
-                                    value={item.batteryStatus} 
-                                    className="h-2"
-                                    indicator={item.batteryStatus < 20 ? 'bg-red-500' : item.batteryStatus < 50 ? 'bg-amber-500' : 'bg-green-500'}
-                                  />
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell>{getStatusBadge(item.status)}</TableCell>
-                            <TableCell className="text-right">
-                              <Button variant="ghost" size="sm">Details</Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="map" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Security Map</CardTitle>
-                <CardDescription>Interactive map of security zones and incidents</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-center border rounded-md h-[400px] bg-muted/20">
-                  <div className="text-center">
-                    <MapPinned className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-                    <h3 className="text-lg font-medium">Interactive Security Map</h3>
-                    <p className="text-sm text-muted-foreground">Map would display security zones, incident locations, and patrol routes</p>
-                    <Button className="mt-4">Load Map View</Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Zone Security Rating</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Eastern Zone</span>
-                        <span>87%</span>
-                      </div>
-                      <Progress value={87} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Northern Zone</span>
-                        <span>92%</span>
-                      </div>
-                      <Progress value={92} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Western Zone</span>
-                        <span>78%</span>
-                      </div>
-                      <Progress value={78} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Southern Zone</span>
-                        <span>81%</span>
-                      </div>
-                      <Progress value={81} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Central Zone</span>
-                        <span>95%</span>
-                      </div>
-                      <Progress value={95} className="h-2" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Recent Incidents Map</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {incidents.slice(0, 5).map(incident => (
-                      <div key={incident.id} className="flex items-start gap-2 pb-2 border-b">
-                        <div className="mt-1">
-                          <AlertTriangle className={
-                            incident.severity === 'critical' ? "h-4 w-4 text-red-500" :
-                            incident.severity === 'high' ? "h-4 w-4 text-orange-500" :
-                            incident.severity === 'medium' ? "h-4 w-4 text-amber-500" :
-                            "h-4 w-4 text-blue-500"
-                          } />
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium">{incident.title}</div>
-                          <div className="text-xs text-muted-foreground">{incident.location}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Patrol Routes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {patrols.map(patrol => (
-                      <div key={patrol.id} className="flex items-start gap-2 pb-2 border-b last:border-0">
-                        <div className="mt-1">
-                          <Footprints className="h-4 w-4 text-green-500" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium">{patrol.name}</div>
-                          <div className="text-xs text-muted-foreground">{patrol.route}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
         </Tabs>
 
-        {/* Security Overview Cards */}
+        {/* Dashboard Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Incidents Today</CardTitle>
+              <CardTitle className="text-sm font-medium">Incident Status Distribution</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">3</div>
-              <p className="text-xs text-muted-foreground">2 resolved, 1 in progress</p>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="flex items-center">
+                      <span className="h-3 w-3 rounded-full bg-red-500 mr-2"></span>
+                      Open
+                    </span>
+                    <span>{incidents.filter(i => i.status === 'open').length} incidents</span>
+                  </div>
+                  <Progress value={incidents.filter(i => i.status === 'open').length / incidents.length * 100} className="h-2 bg-red-100" />
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="flex items-center">
+                      <span className="h-3 w-3 rounded-full bg-amber-500 mr-2"></span>
+                      Investigating
+                    </span>
+                    <span>{incidents.filter(i => i.status === 'investigating').length} incidents</span>
+                  </div>
+                  <Progress value={incidents.filter(i => i.status === 'investigating').length / incidents.length * 100} className="h-2 bg-amber-100" />
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="flex items-center">
+                      <span className="h-3 w-3 rounded-full bg-green-500 mr-2"></span>
+                      Resolved
+                    </span>
+                    <span>{incidents.filter(i => i.status === 'resolved').length} incidents</span>
+                  </div>
+                  <Progress value={incidents.filter(i => i.status === 'resolved').length / incidents.length * 100} className="h-2 bg-green-100" />
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="flex items-center">
+                      <span className="h-3 w-3 rounded-full bg-gray-500 mr-2"></span>
+                      Closed
+                    </span>
+                    <span>{incidents.filter(i => i.status === 'closed').length} incidents</span>
+                  </div>
+                  <Progress value={incidents.filter(i => i.status === 'closed').length / incidents.length * 100} className="h-2 bg-gray-100" />
+                </div>
+              </div>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Active Patrols</CardTitle>
+              <CardTitle className="text-sm font-medium">Security Objectives</CardTitle>
+              <CardDescription>Progress towards key security goals</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">4</div>
-              <p className="text-xs text-muted-foreground">12 staff deployed</p>
+              <div className="space-y-4">
+                {objectives.map((objective) => {
+                  const progress = calculateProgress(objective.current, objective.target);
+                  return (
+                    <div key={objective.id} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-sm font-medium">{objective.title}</h3>
+                        <Badge variant="outline" className={
+                          objective.status === 'on-track' ? 'text-green-500 border-green-500' :
+                          objective.status === 'at-risk' ? 'text-amber-500 border-amber-500' : 'text-red-500 border-red-500'
+                        }>
+                          {objective.status.replace('-', ' ')}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-muted-foreground">{objective.description}</div>
+                      <div className="flex justify-between text-sm">
+                        <span>{progress}% Complete</span>
+                      </div>
+                      <Progress value={progress} className="h-2" />
+                    </div>
+                  );
+                })}
+              </div>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Equipment Status</CardTitle>
+              <CardTitle className="text-sm font-medium">Recent Incidents by Location</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">93%</div>
-              <p className="text-xs text-muted-foreground">Operational rate</p>
+              <div className="space-y-3">
+                {locations.map((location, idx) => {
+                  const locationIncidentCount = incidents.filter(i => i.location === location).length;
+                  const locationColors = [
+                    'bg-blue-500', 'bg-purple-500', 'bg-amber-500',
+                    'bg-green-500', 'bg-red-500', 'bg-indigo-500'
+                  ];
+                  const locationBgColors = [
+                    'bg-blue-100', 'bg-purple-100', 'bg-amber-100',
+                    'bg-green-100', 'bg-red-100', 'bg-indigo-100'
+                  ];
+                  return (
+                    <div key={location}>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="flex items-center">
+                          <MapPin className={`h-3 w-3 text-muted-foreground mr-2`} />
+                          {location}
+                        </span>
+                        <span>{locationIncidentCount} incidents</span>
+                      </div>
+                      <Progress
+                        value={locationIncidentCount / incidents.length * 100}
+                        className={`h-2 ${locationBgColors[idx % locationBgColors.length]}`}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Response Time</CardTitle>
+              <CardTitle className="text-sm font-medium">Security Alerts</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">11.2 min</div>
-              <p className="text-xs text-muted-foreground">Average response time</p>
+              <div className="space-y-3">
+                {[
+                  { message: 'Perimeter breach detected in Sector 4', time: '5 minutes ago', type: 'critical' },
+                  { message: 'Suspicious activity near visitor center', time: '15 minutes ago', type: 'warning' },
+                  { message: 'Security drill scheduled for tomorrow', time: '30 minutes ago', type: 'info' }
+                ].map((alert, idx) => {
+                  let icon;
+                  let colorClass;
+
+                  switch (alert.type) {
+                    case 'critical':
+                      icon = <AlertTriangle className="h-4 w-4 text-red-500" />;
+                      colorClass = 'text-red-500';
+                      break;
+                    case 'warning':
+                      icon = <AlertTriangle className="h-4 w-4 text-amber-500" />;
+                      colorClass = 'text-amber-500';
+                      break;
+                    case 'info':
+                      icon = <Info className="h-4 w-4 text-blue-500" />;
+                      colorClass = 'text-blue-500';
+                      break;
+                    default:
+                      icon = <Bell className="h-4 w-4 text-gray-500" />;
+                      colorClass = 'text-gray-500';
+                      break;
+                  }
+
+                  return (
+                    <div key={idx} className="flex items-center justify-between p-2 border rounded-md">
+                      <div className="flex items-center gap-2">
+                        {icon}
+                        <span className="text-sm">{alert.message}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">{alert.time}</div>
+                    </div>
+                  );
+                })}
+                <Button variant="ghost" size="sm" className="w-full mt-2">
+                  <Bell className="h-4 w-4 mr-2" /> View All Alerts
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

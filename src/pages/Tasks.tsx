@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/layout/PageTemplate';
 import { UserCog, Search, Plus, Calendar, Clock, CheckCheck, AlertCircle, MoreHorizontal, User, Filter, CheckSquare, XSquare, ArrowUpDown, List, CalendarDays, Tags, Circle } from 'lucide-react';
@@ -338,7 +337,7 @@ const Tasks = () => {
                 </SelectContent>
               </Select>
               <Button variant="outline" className="w-full sm:w-auto">
-                <Filter className="h-4 w-4 sm:mr-2" />
+                <Filter className="h-4 w-4" />
                 <span className="hidden sm:inline">Filter</span>
               </Button>
             </div>
