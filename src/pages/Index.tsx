@@ -259,14 +259,14 @@ const Index = () => {
 
   return (
     <MainLayout>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+      <div className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Dashboard</h1>
         <p className="text-muted-foreground">
           Welcome to Kenya Wildlife Service Management System
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
+      <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-4">
         {stats.map((stat, index) => (
           <StatCard
             key={index}
@@ -278,7 +278,7 @@ const Index = () => {
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-4">
+      <div className="grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-4">
         <AnimalHealthSummary
           data={healthData}
           totalAnimals={1284}
@@ -291,7 +291,7 @@ const Index = () => {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3 mb-4">
+      <div className="grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-3 mb-4">
         <VisitorStats
           data={visitorData}
           totalVisitors={6536}
@@ -299,11 +299,11 @@ const Index = () => {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-4">
+      <div className="grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-4">
         <ConservationMetrics metrics={conservationMetrics} />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         <WildlifeTracker
           animals={animalLocations}
           onViewMap={handleViewMap}
@@ -314,10 +314,10 @@ const Index = () => {
           onViewAllTasks={handleViewAllTasks}
           onTaskComplete={handleTaskComplete}
         />
-        <div className="bg-card rounded-lg border shadow-sm p-6 flex flex-col justify-center items-center text-center space-y-4">
-          <Ticket className="h-16 w-16 text-kws-amber" />
-          <h3 className="text-xl font-semibold">Quick Access</h3>
-          <p className="text-muted-foreground">
+        <div className="bg-card rounded-lg border shadow-sm p-4 md:p-6 flex flex-col justify-center items-center text-center space-y-3 md:space-y-4">
+          <Ticket className="h-12 w-12 md:h-16 md:w-16 text-kws-amber" />
+          <h3 className="text-lg md:text-xl font-semibold">Quick Access</h3>
+          <p className="text-muted-foreground text-sm md:text-base">
             Manage tickets, visitor groups, or access animal tracking tools directly
           </p>
           <div className="grid grid-cols-2 gap-2 w-full mt-2">

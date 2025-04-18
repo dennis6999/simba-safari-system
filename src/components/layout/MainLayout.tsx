@@ -21,7 +21,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
     } else {
       setSidebarCollapsed(false);
     }
-  }, []); // Only run on initial mount
+  }, [isMobile]); // Update when screen size changes
 
   const toggleSidebar = () => {
     if (isMobile) {
@@ -44,7 +44,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
         !isMobile && sidebarCollapsed ? "ml-16" : !isMobile ? "ml-64" : "ml-0"
       )}>
         <TopBar openMobileSidebar={() => setMobileSidebarOpen(true)} />
-        <main className="flex-1 p-4 md:p-6 overflow-auto">{children}</main>
+        <main className="flex-1 p-3 md:p-6 overflow-auto">{children}</main>
       </div>
     </div>
   );
