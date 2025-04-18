@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/layout/PageTemplate';
 import { 
@@ -716,3 +717,107 @@ const Reports = () => {
                     ].map((scheduled, idx) => (
                       <div key={idx} className="flex justify-between items-center p-2 border rounded-md">
                         <div>
+                          <div className="font-medium text-sm">{scheduled.name}</div>
+                          <div className="text-xs text-muted-foreground">{scheduled.frequency}</div>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Next: {new Date(scheduled.nextRun).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                    <Button variant="outline" className="w-full mt-2">
+                      <Calendar className="mr-2 h-4 w-4" /> Schedule Report
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Export Options</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {[
+                      { name: 'PDF Document', icon: <FileText className="h-4 w-4 text-primary" /> },
+                      { name: 'Excel Spreadsheet', icon: <FileText className="h-4 w-4 text-primary" /> },
+                      { name: 'CSV Data', icon: <FileText className="h-4 w-4 text-primary" /> },
+                      { name: 'PowerPoint Presentation', icon: <FileText className="h-4 w-4 text-primary" /> }
+                    ].map((format, idx) => (
+                      <div key={idx} className="flex justify-between items-center p-2 border rounded-md hover:bg-muted/30 transition-colors">
+                        <div className="flex items-center gap-2">
+                          {format.icon}
+                          <span className="text-sm">{format.name}</span>
+                        </div>
+                        <Button variant="ghost" size="sm">Export</Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ChartPlaceholder 
+                type="bar" 
+                title="Animal Health Indicators"
+                subtitle="Tracking health metrics across species" 
+              />
+              <ChartPlaceholder 
+                type="line" 
+                title="Visitor Trends"
+                subtitle="Monthly visitor patterns and demographics" 
+              />
+              <ChartPlaceholder 
+                type="area" 
+                title="Conservation Progress"
+                subtitle="Key conservation metrics and achievements" 
+              />
+              <ChartPlaceholder 
+                type="pie" 
+                title="Report Distribution"
+                subtitle="Breakdown of report categories" 
+              />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="dashboards" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Custom Dashboards</CardTitle>
+                <CardDescription>Create and manage custom analytics dashboards</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    { name: 'Executive Overview', description: 'High-level metrics for management review', charts: 5 },
+                    { name: 'Conservation Dashboard', description: 'Detailed conservation program analytics', charts: 8 },
+                    { name: 'Visitor Insights', description: 'Visitor patterns and engagement metrics', charts: 6 }
+                  ].map((dashboard, idx) => (
+                    <div key={idx} className="border rounded-lg p-4 hover:bg-muted/30 transition-colors">
+                      <div className="font-medium">{dashboard.name}</div>
+                      <p className="text-sm text-muted-foreground mt-1">{dashboard.description}</p>
+                      <div className="flex justify-between items-center mt-4">
+                        <span className="text-xs text-muted-foreground">{dashboard.charts} charts</span>
+                        <Button variant="outline" size="sm">View</Button>
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="border rounded-lg p-4 border-dashed flex flex-col items-center justify-center h-[140px]">
+                    <Plus className="h-8 w-8 text-muted-foreground mb-2" />
+                    <Button variant="outline">Create New Dashboard</Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </PageTemplate>
+  );
+};
+
+export default Reports;
