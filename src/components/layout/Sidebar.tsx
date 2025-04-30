@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -20,6 +21,8 @@ import {
   Globe,
   BellRing,
   X,
+  MessageCircle,
+  User,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -215,6 +218,14 @@ export const Sidebar = ({ collapsed, mobileOpen, toggleCollapsed, closeMobileSid
             active={currentPath === "/sustainability"}
             onClick={isMobile ? closeMobileSidebar : undefined}
           />
+          <SidebarItem 
+            icon={MessageCircle} 
+            label="Feedback" 
+            href="/feedback" 
+            collapsed={collapsed && !isMobile} 
+            active={currentPath === "/feedback"}
+            onClick={isMobile ? closeMobileSidebar : undefined}
+          />
         </SidebarSection>
 
         <SidebarSection title="Operations" collapsed={collapsed && !isMobile}>
@@ -259,6 +270,17 @@ export const Sidebar = ({ collapsed, mobileOpen, toggleCollapsed, closeMobileSid
             href="/reports"
             collapsed={collapsed && !isMobile}
             active={currentPath === "/reports"}
+            onClick={isMobile ? closeMobileSidebar : undefined}
+          />
+        </SidebarSection>
+
+        <SidebarSection title="Account" collapsed={collapsed && !isMobile}>
+          <SidebarItem
+            icon={User}
+            label="Register"
+            href="/register"
+            collapsed={collapsed && !isMobile}
+            active={currentPath === "/register"}
             onClick={isMobile ? closeMobileSidebar : undefined}
           />
         </SidebarSection>
